@@ -14,7 +14,6 @@
         android:orientation="horizontal"
         android:background="@color/paleGrey">
 
-
         <Button
             android:id="@+id/textView"
             android:layout_width="0dp"

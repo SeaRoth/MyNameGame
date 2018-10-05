@@ -28,7 +28,6 @@ import wt.cr.com.mynamegame.infrastructure.common.utils.dpToPx
 const val ERROR_REGION = "Sorry, this feature is currently not available in your region."
 abstract class BaseActivity : AppCompatActivity() {
 
-    val groupAdapter = GroupAdapter<ViewHolder>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
