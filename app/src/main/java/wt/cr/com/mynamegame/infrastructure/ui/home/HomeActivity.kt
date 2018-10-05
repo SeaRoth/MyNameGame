@@ -1,0 +1,80 @@
+package wt.cr.com.mynamegame.infrastructure.ui.home
+
+import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
+import android.databinding.DataBindingUtil
+import android.os.Bundle
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
+import com.xwray.groupie.GroupAdapter
+import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
+import com.xwray.groupie.Section
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.home_activity.*
+import timber.log.Timber
+import wt.cr.com.mynamegame.R
+import wt.cr.com.mynamegame.databinding.HomeActivityBinding
+
+class HomeActivity : BaseActivity(){
+
+    companion object {
+        fun newIntent(context: Context): Intent {
+            return Intent(context, HomeActivity::class.java)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    private val personGroupAdapter = GroupAdapter<ViewHolder>()
+    private val homeActivityViewModel : HomeActivityViewModel by lazy {
+        ViewModelProviders.of(this).get(HomeActivityViewModel::class.java)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        DataBindingUtil.setContentView<HomeActivityBinding>(this, R.layout.home_activity).apply {
+            activityViewModel = homeActivityViewModel
+        }
+
+        homeActivityViewModel.apiErrorAction.observe(this){ it ->
+            showApiError(it)
+        }
+
+        homeActivityViewModel.networkErrorAction.observe(this){
+            showSnackBar()
+        }
+
+        setupAdapter()
+    }
+
+    val mainListGroup = Section()
+    fun setupAdapter(){
+        rv_multi_item.layoutManager = LinearLayoutManager(this@HomeActivity)
+        rv_multi_item.itemAnimator = DefaultItemAnimator()
+        rv_multi_item.adapter = personGroupAdapter
+        mainListGroup.apply { setHeader(HomeActivityHeaderItem(homeActivityViewModel)) }
+        mainListGroup.apply { setFooter(HomeActivityFooterItem(homeActivityViewModel)) }
+        personGroupAdapter.add(mainListGroup)
+    }
+
+    private fun startRandomMode() {
+        Timber.w("startRandomMode")
+
+    }
+
+    private fun startMattMode() {
+        Timber.w("startMattMode")
+    }
+
+    private fun startNormalMode(){
+        Timber.w("startNormalMode")
+    }
+
+}
+

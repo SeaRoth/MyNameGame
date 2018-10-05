@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="wt.cr.com.mynamegame">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:name=".infrastructure.NameGameApplication"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity android:name=".infrastructure.ui.home.HomeActivity"
+            android:screenOrientation="sensorPortrait" >
+        </activity>
+
+        <activity android:name=".infrastructure.ui.splash.SplashActivity"
+            android:screenOrientation="sensorPortrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+    </application>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>

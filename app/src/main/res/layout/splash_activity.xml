@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="wt.cr.com.mynamegame.infrastructure.ui.splash.SplashActivityViewModel" />
+    </data>
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/brown"
+    tools:context=".infrastructure.ui.splash.SplashActivity">
+
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="239dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/logo_black" />
+
+    <ImageView
+        android:id="@+id/imageView10"
+        android:layout_width="0dp"
+        android:layout_height="116dp"
+        android:layout_marginBottom="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/logo_blue" />
+
+    <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/loading_indicator"-->
+        <!--android:layout_width="75dp"-->
+        <!--android:layout_height="75dp"-->
+        <!--app:lottie_fileName="load_indicator_white.json"-->
+        <!--app:lottie_loop="true"-->
+        <!--app:lottie_autoPlay="true"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--android:visibility="@{viewModel.showLoadingIndicator}"-->
+        <!--app:layout_constraintStart_toStartOf="parent"/>-->
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.33" />
+</android.support.constraint.ConstraintLayout>
+</layout>
