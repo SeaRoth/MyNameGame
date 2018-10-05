@@ -4,6 +4,9 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableBoolean
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
 //import io.reactivex.android.schedulers.AndroidSchedulers
 //import io.reactivex.disposables.Disposable
@@ -14,11 +17,12 @@ import timber.log.Timber
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
+import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
-//    private var disposable: Disposable? = null
+    private var disposable: Disposable? = null
 
     //actions
     val apiErrorAction = LiveDataActionWithData<String>()
@@ -56,20 +60,22 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             val p = MyModel.Person("1337", "Curry")
             val vm = PersonViewModel(p)
             peopleViewModelList = ArrayList()
-
             peopleViewModelList.add(vm)
-            normalMode()
-//            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(
-//                            { result ->
-//                                myPeople = result.query.coworker
-//                                showLoadingIndicator.set(false)
-//                                normalMode()
-//                            },
-//                            { error -> Timber.w("Sorry does not compute") }
-//                    )
+
+            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { result ->
+                                val someList = result.data.map { PersonViewModel(it) }
+                                peopleViewModelList.addAll(someList)
+                                showLoadingIndicator.set(false)
+                                normalMode()
+                            },
+                            { error ->
+                                Timber.w("Sorry does not compute ${error.localizedMessage}" )
+                            }
+                    )
         }
     }
 
@@ -82,7 +88,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         hintSelected.set(false)
         mattSelected.set(false)
         fourSelected.set(false)
-
         loadPeopleAction.postValue(peopleViewModelList)
     }
 

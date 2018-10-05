@@ -13,7 +13,6 @@ import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
-import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
 
@@ -65,19 +64,5 @@ class HomeActivity : BaseActivity(){
         mainListGroup.apply { setFooter(HomeActivityFooterItem(homeActivityViewModel)) }
         personGroupAdapter.add(mainListGroup)
     }
-
-    private fun startRandomMode() {
-        Timber.w("startRandomMode")
-
-    }
-
-    private fun startMattMode() {
-        Timber.w("startMattMode")
-    }
-
-    private fun startNormalMode(){
-        Timber.w("startNormalMode")
-    }
-
 }
 

@@ -8,10 +8,10 @@ import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 
 interface HumanRepo {
-    suspend fun getProfiles() : Deferred<Observable<MyModel.Result>>
+    suspend fun getProfiles() : Deferred<Observable<MyModel.Query>>
 }
 class HumanRepository : HumanRepo {
-    override suspend fun getProfiles(): Deferred<Observable<MyModel.Result>> {
+    override suspend fun getProfiles(): Deferred<Observable<MyModel.Query>> {
         return async{WTServiceLocator.resolve(ApiClient::class.java).getProfiles()}
     }
 }
