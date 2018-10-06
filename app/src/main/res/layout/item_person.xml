@@ -10,8 +10,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_one_item"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="2dp"
         android:background="@color/white"
@@ -28,6 +28,10 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:maxWidth="100dp"
+            android:maxHeight="100dp"
+            app:imageUrl="@{viewModel.url}"
+            app:placeholder="@{@drawable/logo_black}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -36,11 +40,11 @@
 
         <TextView
             android:id="@+id/textView13"
+            style="@style/NameTitleTheme"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:text="@{viewModel.name}"
-            style="@style/NameTitleTheme"
             app:layout_constraintBottom_toBottomOf="@+id/imageView5"
             app:layout_constraintEnd_toEndOf="@+id/imageView5"
             app:layout_constraintStart_toStartOf="@+id/imageView5" />

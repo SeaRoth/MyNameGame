@@ -51,31 +51,27 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
 
     init {
+        peopleViewModelList = ArrayList()
         loadData()
     }
 
+    private lateinit var profiles: List<MyModel.Person>
     fun loadData() {
         launch(UI) {
             showLoadingIndicator.set(true)
-            val p = MyModel.Person("1337", "Curry")
-            val vm = PersonViewModel(p)
-            peopleViewModelList = ArrayList()
-            peopleViewModelList.add(vm)
-
             disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             { result ->
-                                val someList = result.data.map { PersonViewModel(it) }
-                                peopleViewModelList.addAll(someList)
-                                showLoadingIndicator.set(false)
+                                profiles = result.data
                                 normalMode()
                             },
                             { error ->
                                 Timber.w("Sorry does not compute ${error.localizedMessage}" )
                             }
                     )
+            showLoadingIndicator.set(false)
         }
     }
 
@@ -84,10 +80,12 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun normalMode(){
+        peopleViewModelList.clear()
         normalSelected.set(true)
         hintSelected.set(false)
         mattSelected.set(false)
         fourSelected.set(false)
+        peopleViewModelList.addAll(profiles.map { PersonViewModel(it) })
         loadPeopleAction.postValue(peopleViewModelList)
     }
 
@@ -96,10 +94,10 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         hintSelected.set(false)
         mattSelected.set(true)
         fourSelected.set(false)
-        launch(UI) {
-            showLoadingIndicator.set(true)
-
-        }
+        showLoadingIndicator.set(true)
+        peopleViewModelList.clear()
+        peopleViewModelList.addAll(profiles.asSequence().filter { it.firstName.equals("Matt", true) }.map { PersonViewModel(it) }.toList())
+        loadPeopleAction.postValue(peopleViewModelList)
     }
 
     fun hintMode(){

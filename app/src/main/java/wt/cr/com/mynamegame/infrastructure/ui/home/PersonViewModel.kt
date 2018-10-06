@@ -11,6 +11,7 @@ class PersonViewModel(private val person: MyModel.Person): BaseBindableViewModel
 
     //observables
     val name = ObservableField<String>(person.firstName)
+    val url = ObservableField<String>("http:${person.headshot.url}")
 
     //actions
     val personClicked = LiveDataActionWithData<MyModel.Person>()

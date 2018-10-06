@@ -24,11 +24,8 @@ class HomeActivity : BaseActivity(){
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
-
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
+    private val mainListGroup = Section()
     private val homeActivityViewModel : HomeActivityViewModel by lazy {
         ViewModelProviders.of(this).get(HomeActivityViewModel::class.java)
     }
@@ -49,14 +46,15 @@ class HomeActivity : BaseActivity(){
         }
 
         homeActivityViewModel.loadPeopleAction.observe(this, Observer {
-            it?.let{personViewModels -> mainListGroup.update(personViewModels)}
+            it?.let{ personViewModels -> mainListGroup.update(personViewModels) }
         })
+
+        personGroupAdapter.spanCount = 6
 
         setupAdapter()
     }
 
-    val mainListGroup = Section()
-    fun setupAdapter(){
+    private fun setupAdapter(){
         rv_multi_item.layoutManager = LinearLayoutManager(this@HomeActivity)
         rv_multi_item.itemAnimator = DefaultItemAnimator()
         rv_multi_item.adapter = personGroupAdapter
