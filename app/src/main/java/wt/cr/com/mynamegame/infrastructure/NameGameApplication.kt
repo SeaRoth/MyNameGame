@@ -10,7 +10,7 @@ class NameGameApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        AndroidThreeTen.init(this);
+        AndroidThreeTen.init(this)
         ServiceInitializer.initServices(this)
     }
 }

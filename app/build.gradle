@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+androidExtensions {
+    experimental = true
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -24,10 +28,6 @@ android {
     // enable data binding
     dataBinding {
         enabled = true
-    }
-
-    androidExtensions {
-        experimental = true
     }
 }
 

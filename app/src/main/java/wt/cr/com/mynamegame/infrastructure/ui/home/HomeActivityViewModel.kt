@@ -4,6 +4,7 @@ import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
 import android.databinding.ObservableBoolean
+import android.databinding.ObservableField
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -19,6 +20,7 @@ import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
+import java.util.*
 
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -38,11 +40,13 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val showPerson5 = ObservableBoolean(true)
     val showPerson6 = ObservableBoolean(true)
 
+    val numberCorrectField = ObservableField<String>("Correct: 0")
+    val numberIncorrectField = ObservableField<String>("Incorrect: 0")
+
     val normalSelected = ObservableBoolean(true)
     val mattSelected = ObservableBoolean(false)
     val hintSelected = ObservableBoolean(false)
     val fourSelected = ObservableBoolean(false)
-
 
     //data
     private lateinit var peopleViewModelList: ArrayList<PersonViewModel>
@@ -55,22 +59,25 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         loadData()
     }
 
-    private lateinit var profiles: List<MyModel.Person>
-    fun loadData() {
+    private lateinit var profiles: ArrayList<MyModel.Person>
+    private fun loadData() {
         launch(UI) {
             showLoadingIndicator.set(true)
-            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            { result ->
-                                profiles = result.data
-                                normalMode()
-                            },
-                            { error ->
-                                Timber.w("Sorry does not compute ${error.localizedMessage}" )
-                            }
-                    )
+//            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(
+//                            { result ->
+//                                profiles = result.data
+//                                normalMode()
+//                            },
+//                            { error ->
+//                                apiErrorAction.actionOccurred(error.localizedMessage)
+//                            }
+//                    )
+            val something = humanRepo.getProfiles()
+            disposable.
+            something?.data?.let { profiles.addAll(it) }
             showLoadingIndicator.set(false)
         }
     }
@@ -85,8 +92,15 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         hintSelected.set(false)
         mattSelected.set(false)
         fourSelected.set(false)
-        peopleViewModelList.addAll(profiles.map { PersonViewModel(it) })
+        var i = 1
+        peopleViewModelList.addAll( profiles
+                .map { PersonViewModel("${i++}",it,this::onPersonClick) }
+                .take(6))
         loadPeopleAction.postValue(peopleViewModelList)
+    }
+
+    private fun onPersonClick(person: PersonViewModel){
+
     }
 
     fun mattMode(){
@@ -96,7 +110,14 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         fourSelected.set(false)
         showLoadingIndicator.set(true)
         peopleViewModelList.clear()
-        peopleViewModelList.addAll(profiles.asSequence().filter { it.firstName.equals("Matt", true) }.map { PersonViewModel(it) }.toList())
+        peopleViewModelList.addAll(profiles.asSequence().
+                filter { it.firstName
+                        .equals("Matt", true)
+                }
+                .map {
+                    PersonViewModel("1",it, this::onPersonClick)
+                }
+                .toList())
         loadPeopleAction.postValue(peopleViewModelList)
     }
 
@@ -107,7 +128,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         fourSelected.set(false)
         launch(UI) {
             showLoadingIndicator.set(true)
-
         }
     }
 

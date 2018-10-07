@@ -13,8 +13,4 @@ class PersonItem constructor(var personViewModel: PersonViewModel?) : BindableIt
     override fun bind(viewBinding: ViewDataBinding, position: Int) {
         (viewBinding as ItemPersonBinding).viewModel = personViewModel
     }
-
-    override fun getSpanSize(spanCount: Int, position: Int): Int {
-        return spanCount / 2
-    }
 }

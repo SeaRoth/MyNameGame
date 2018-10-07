@@ -49,7 +49,7 @@ class HomeActivity : BaseActivity(){
             it?.let{ personViewModels -> mainListGroup.update(personViewModels) }
         })
 
-        personGroupAdapter.spanCount = 6
+        personGroupAdapter.spanCount = 2
 
         setupAdapter()
     }
