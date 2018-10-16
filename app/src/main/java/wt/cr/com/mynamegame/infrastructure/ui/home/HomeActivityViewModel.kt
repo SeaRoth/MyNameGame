@@ -9,9 +9,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
-//import io.reactivex.android.schedulers.AndroidSchedulers
-//import io.reactivex.disposables.Disposable
-//import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
@@ -39,7 +36,9 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val showPerson4 = ObservableBoolean(true)
     val showPerson5 = ObservableBoolean(true)
     val showPerson6 = ObservableBoolean(true)
+    val isGameStarted = ObservableBoolean(false)
 
+    val questionText = ObservableField<String>("Who is: Mambo #5?")
     val numberCorrectField = ObservableField<String>("Correct: 0")
     val numberIncorrectField = ObservableField<String>("Incorrect: 0")
 
@@ -63,27 +62,36 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     private fun loadData() {
         launch(UI) {
             showLoadingIndicator.set(true)
-//            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(
-//                            { result ->
-//                                profiles = result.data
-//                                normalMode()
-//                            },
-//                            { error ->
-//                                apiErrorAction.actionOccurred(error.localizedMessage)
-//                            }
-//                    )
-            val something = humanRepo.getProfiles()
-            disposable.
-            something?.data?.let { profiles.addAll(it) }
+            disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                            { result ->
+                                profiles = result.data
+                                normalMode()
+                            },
+                            { error ->
+                                apiErrorAction.actionOccurred(error.localizedMessage)
+                            }
+                    )
             showLoadingIndicator.set(false)
         }
     }
 
-    fun selectClicked(){
-        Timber.w("User clicked")
+    fun startGame(){
+        if(isGameStarted.get()){
+            //TURN OFF
+            isGameStarted.set(false)
+
+        }else{
+            //TURN ON
+            isGameStarted.set(true)
+
+        }
+    }
+
+    fun selectClicked(index: Int){
+        Timber.w("User clicked $index")
     }
 
     fun normalMode(){
@@ -95,6 +103,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         var i = 1
         peopleViewModelList.addAll( profiles
                 .map { PersonViewModel("${i++}",it,this::onPersonClick) }
+                .shuffled()
                 .take(6))
         loadPeopleAction.postValue(peopleViewModelList)
     }

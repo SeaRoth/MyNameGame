@@ -1,11 +1,24 @@
 <resources>
     <string name="app_name">MyNameGame</string>
-    <string name="standard_error_message">We\'re sorry, something went wrong, and we couldn\'t complete your request. Please try again.</string>
-    <string name="standard_error_api">We\'re experiencing difficulty. Processing…</string>
+    <!--GAME MODES -->
+    <string name="game_modes">Game Modes</string>
     <string name="matt">Matt</string>
     <string name="random">Random</string>
     <string name="normal">Normal</string>
+    <string name="hint">Hint</string>
+
+    <!--ERRORS-->
     <string name="connectivity_error">Cannot connect to the internet</string>
+    <string name="standard_error_message">We\'re sorry, something went wrong, and we couldn\'t complete your request. Please try again.</string>
+    <string name="standard_error_api">We\'re experiencing difficulty. Processing…</string>
     <string name="settings">Settings</string>
     <string name="try_again">TRY AGAIN</string>
+
+    <!--GAME NUMBERS-->
+    <string name="one">1</string>
+    <string name="two">2</string>
+    <string name="three">3</string>
+    <string name="four">4</string>
+    <string name="five">5</string>
+    <string name="six">6</string>
 </resources>

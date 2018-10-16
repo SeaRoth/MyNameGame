@@ -58,8 +58,8 @@ class HomeActivity : BaseActivity(){
         rv_multi_item.layoutManager = LinearLayoutManager(this@HomeActivity)
         rv_multi_item.itemAnimator = DefaultItemAnimator()
         rv_multi_item.adapter = personGroupAdapter
-        mainListGroup.apply { setHeader(HomeActivityHeaderItem(homeActivityViewModel)) }
-        mainListGroup.apply { setFooter(HomeActivityFooterItem(homeActivityViewModel)) }
+        //mainListGroup.apply { setHeader(HomeActivityHeaderItem(homeActivityViewModel)) }
+        //mainListGroup.apply { setFooter(HomeActivityFooterItem(homeActivityViewModel)) }
         personGroupAdapter.add(mainListGroup)
     }
 }

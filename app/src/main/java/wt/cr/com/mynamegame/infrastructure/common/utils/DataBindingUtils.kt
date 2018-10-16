@@ -54,3 +54,12 @@ fun setMarginBottom(view: View, margin: Int) {
         view.requestLayout()
     }
 }
+
+@BindingAdapter("app:layout_marginTop")
+fun setMarginTop(view: View, margin: Int) {
+    val params = view.layoutParams
+    if (params is ViewGroup.MarginLayoutParams) {
+        params.topMargin = margin
+        view.requestLayout()
+    }
+}
