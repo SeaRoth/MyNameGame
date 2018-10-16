@@ -26,7 +26,7 @@ Uses/features/stuff:
 Original Question: https://github.com/willowtreeapps/namegame_android
 
 ### View1
-![Question](https://github.com/SeaRoth/MyNameGame/blob/master/normal.png?raw=true)
+![Question](https://github.com/SeaRoth/MyNameGame/blob/master/1.png?raw=true)
 
 ### View2
-![Question](https://github.com/SeaRoth/MyNameGame/blob/master/matt.png?raw=true)
+![Question](https://github.com/SeaRoth/MyNameGame/blob/master/2.png?raw=true)
