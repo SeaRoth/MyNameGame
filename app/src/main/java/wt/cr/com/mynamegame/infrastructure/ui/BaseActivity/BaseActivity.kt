@@ -8,20 +8,17 @@ import android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 import android.content.res.Configuration
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.ViewHolder
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.infrastructure.common.utils.dpToPx
 
@@ -47,6 +44,19 @@ abstract class BaseActivity : AppCompatActivity() {
                 .setAction(R.string.settings) {
                     startActivityForResult(Intent(android.provider.Settings.ACTION_SETTINGS), 0) }
                 .show()
+    }
+
+    private fun showSignoutDialog(title: String, question: String) {
+        AlertDialog.Builder(this).apply {
+            setMessage(question)
+            setNegativeButton(R.string.cancel, null)
+            setPositiveButton(title, {dialog, id -> signout()})
+            show()
+        }
+    }
+
+    private fun signout(){
+        finishAffinity()
     }
 
     enum class ActionBarStyle {
@@ -108,7 +118,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return true
     }
 
-    fun saveUpdateView(view: TextView,label: String){
+    fun saveUpdateView(view: TextView, label: String){
         view.text = label
         view.visibility = View.VISIBLE
         val animPos =  dpToPx(21).toFloat()

@@ -19,7 +19,6 @@ class SplashActivityViewModel(app: Application): AndroidViewModel(app){
 
     private fun displayLoadingIndicator(){
         launch(UI){
-            delay(3000)
             showLoadingIndicator.set(true)
             goToHomeActivity()
         }
@@ -27,7 +26,6 @@ class SplashActivityViewModel(app: Application): AndroidViewModel(app){
 
     private fun goToHomeActivity(){
         launch(UI) {
-            delay(2000)
             showLoadingIndicator.set(false)
             navigateAction.actionOccurred()
         }

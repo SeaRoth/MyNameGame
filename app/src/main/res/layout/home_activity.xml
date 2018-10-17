@@ -3,13 +3,35 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
+
+        <import type="wt.cr.com.mynamegame.infrastructure.ui.home.CurrentGameMode"/>
+
         <variable
             name="activityViewModel"
             type="wt.cr.com.mynamegame.infrastructure.ui.home.HomeActivityViewModel" />
+
+
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/save_update_view_act_list_detail"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="36dp"
+            android:background="@color/navy"
+            android:gravity="center_vertical"
+            android:text="@string/app_name"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="parent"
+            />
 
         <TextView
             android:id="@+id/tv_game_modes"
@@ -40,20 +62,20 @@
             tools:text="Correct: 2" />
 
         <TextView
-            android:id="@+id/textView8"
+            android:id="@+id/tv_top_score"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@{activityViewModel.numberIncorrectField}"
-            android:textAlignment="textEnd"
+            android:text="@{activityViewModel.highScoreField}"
             android:textSize="12sp"
             android:textStyle="bold"
+            android:textAlignment="viewEnd"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_game_modes"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Incorrect: 1" />
+            tools:text="Top Score: 2" />
 
         <LinearLayout
             android:id="@+id/linearLayout2"
@@ -76,7 +98,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="@{activityViewModel.normalSelected ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
+                android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.NORMAL ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.normalMode()}"
                 android:text="@string/normal"
                 android:textSize="14sp"
@@ -91,7 +113,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="@{activityViewModel.mattSelected ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
+                android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.MATT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.mattMode()}"
                 android:text="@string/matt"
                 android:textSize="14sp"
@@ -106,7 +128,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="@{activityViewModel.hintSelected ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
+                android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.HINT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.hintMode()}"
                 android:text="@string/hint"
                 android:textSize="14sp"
@@ -121,7 +143,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="@{activityViewModel.fourSelected ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
+                android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.CUSTOM ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.fourMode()}"
                 android:text="4"
                 android:textSize="14sp"
@@ -160,7 +182,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(1)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(1)}"
                 android:text="1"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -175,7 +197,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(2)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(2)}"
                 android:text="2"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -190,7 +212,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(3)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(3)}"
                 android:text="3"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -205,7 +227,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(4)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(4)}"
                 android:text="@string/four"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -220,7 +242,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(5)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(5)}"
                 android:text="@string/five"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -236,7 +258,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
                 android:background="@drawable/style_circle_button"
-                android:onClick="@{v -> activityViewModel.selectClicked(6)}"
+                android:onClick="@{v -> activityViewModel.onBottomBarClick(6)}"
                 android:text="@string/six"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -272,10 +294,17 @@
             android:layout_marginBottom="8dp"
             android:backgroundTint="@{activityViewModel.isGameStarted ? @color/errorRed : @color/cart_status_bar}"
             android:src="@{activityViewModel.isGameStarted ? @android:drawable/ic_menu_close_clear_cancel : @android:drawable/ic_media_play}"
-            android:onClick="@{v -> activityViewModel.startGame()}"
+            android:onClick="@{v -> activityViewModel.onStartClicked()}"
             app:layout_constraintBottom_toBottomOf="@+id/rv_multi_item"
             app:layout_constraintEnd_toEndOf="parent" />
 
+        <include
+            layout="@layout/tinted_loaded"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:showProgress="@{activityViewModel.showLoadingIndicator}"/>
 
     </android.support.constraint.ConstraintLayout>
 </layout>

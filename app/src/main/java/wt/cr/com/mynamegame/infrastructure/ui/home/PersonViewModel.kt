@@ -5,13 +5,15 @@ import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
 import com.xwray.groupie.databinding.BindableItem
 import wt.cr.com.mynamegame.domain.model.MyModel
-import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
 class PersonViewModel(private val numerino: String, private val person: MyModel.Person, val personClickListener: (PersonViewModel) -> Unit): BaseBindableViewModel(){
     //observables
     val number = ObservableField<String>(numerino)
-    val name = ObservableField<String>(person.firstName)
+    val id = ObservableField<String>(person.id)
+    val first = ObservableField<String>(person.firstName)
+    val last = ObservableField<String>(person.lastName)
+    val full = ObservableField<String>(person.firstName + " " + person.lastName)
     val url = ObservableField<String>("http:${person.headshot.url}")
     var visible = ObservableBoolean(true)
 
@@ -22,4 +24,6 @@ class PersonViewModel(private val numerino: String, private val person: MyModel.
     fun onClick() {
         personClickListener(this)
     }
+
+
 }

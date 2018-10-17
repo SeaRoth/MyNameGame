@@ -7,7 +7,6 @@ import android.support.annotation.MainThread
 
 class LiveDataAction {
 
-
     private val liveData = MutableLiveData<Boolean>()
 
     @MainThread

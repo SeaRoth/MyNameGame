@@ -46,4 +46,5 @@ abstract class BaseBindableViewModel : Group {
         return delegateItem.registerGroupDataObserver(groupDataObserver)
     }
 
+
 }
