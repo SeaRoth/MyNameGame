@@ -14,7 +14,8 @@
     </data>
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/light_grey">
 
         <TextView
             android:id="@+id/save_update_view_act_list_detail"
@@ -34,19 +35,6 @@
             />
 
         <TextView
-            android:id="@+id/tv_game_modes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/game_modes"
-            android:textSize="24sp"
-            android:visibility="@{!activityViewModel.isGameStarted}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/textView2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -56,10 +44,25 @@
             android:text="@{activityViewModel.numberCorrectField}"
             android:textSize="12sp"
             android:textStyle="bold"
+            style="@style/TopScoreStyle"
             app:layout_constraintEnd_toStartOf="@+id/tv_game_modes"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Correct: 2" />
+
+        <TextView
+            android:id="@+id/tv_game_modes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/game_modes"
+            android:textSize="24sp"
+            android:visibility="@{!activityViewModel.isGameStarted}"
+            android:textColor="@color/primary_dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_top_score"
@@ -72,6 +75,7 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:textAlignment="viewEnd"
+            style="@style/TopScoreStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_game_modes"
             app:layout_constraintTop_toTopOf="parent"
@@ -81,9 +85,6 @@
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@color/paleGrey"
             android:orientation="horizontal"
             android:visibility="@{!activityViewModel.isGameStarted}"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,6 +101,7 @@
                 android:layout_weight="1"
                 android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.NORMAL ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.normalMode()}"
+                android:textColor="@color/white"
                 android:text="@string/normal"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -115,6 +117,7 @@
                 android:layout_weight="1"
                 android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.MATT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.mattMode()}"
+                android:textColor="@color/white"
                 android:text="@string/matt"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -130,6 +133,7 @@
                 android:layout_weight="1"
                 android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.HINT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.hintMode()}"
+                android:textColor="@color/white"
                 android:text="@string/hint"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -145,6 +149,7 @@
                 android:layout_weight="1"
                 android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.CUSTOM ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                 android:onClick="@{v -> activityViewModel.fourMode()}"
+                android:textColor="@color/white"
                 android:text="4"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -156,7 +161,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="8dp"
-            app:layout_marginTop="@{activityViewModel.isGameStarted ? 60 : 4}"
+            app:layout_marginTop="@{activityViewModel.isGameStarted ? 75 : 4}"
             app:layout_constraintBottom_toTopOf="@+id/textView14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -166,7 +171,7 @@
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/paleGrey"
+            android:background="@color/light_grey"
             android:orientation="horizontal"
             android:visibility="@{activityViewModel.isGameStarted}"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -270,15 +275,9 @@
             android:id="@+id/textView14"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@color/blue"
+            style="@style/BottomQuestionTextStyle"
             android:text="@{activityViewModel.questionText}"
             android:visibility="@{activityViewModel.isGameStarted}"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="24sp"
-            android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/linearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -292,7 +291,7 @@
             android:layout_margin="24dp"
             android:layout_marginEnd="48dp"
             android:layout_marginBottom="8dp"
-            android:backgroundTint="@{activityViewModel.isGameStarted ? @color/errorRed : @color/cart_status_bar}"
+            android:backgroundTint="@{activityViewModel.isGameStarted ? @color/crimson : @color/forest_green}"
             android:src="@{activityViewModel.isGameStarted ? @android:drawable/ic_menu_close_clear_cancel : @android:drawable/ic_media_play}"
             android:onClick="@{v -> activityViewModel.onStartClicked()}"
             app:layout_constraintBottom_toBottomOf="@+id/rv_multi_item"

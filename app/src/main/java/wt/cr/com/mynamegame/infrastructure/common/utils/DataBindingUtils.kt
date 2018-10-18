@@ -19,7 +19,12 @@ fun convertBooleanToVisibility(visible: Boolean): Int {
 
 @BindingAdapter(value=["app:imageUrl", "app:placeholder"],requireAll=false)
 fun loadImage(imageView: ImageView, url: String?, placeholder: Drawable) {
-    WTServiceLocator.resolve(Picasso::class.java).load(url).placeholder(placeholder).into(imageView)
+    WTServiceLocator.resolve(Picasso::class.java)
+            .load(url)
+            .placeholder(placeholder)
+            .resize(100,100)
+            .centerInside()
+            .into(imageView)
 }
 
 @BindingAdapter("app:removeFocus")

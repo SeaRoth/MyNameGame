@@ -13,9 +13,9 @@ class ScoreViewModel(private val score: MyModel.Score,
     : BaseBindableViewModel(){
 
     //observables
-    val current   = ObservableField<String>("Correct: ${score.current}")
-    val high      = ObservableField<String>("High Score: ${score.high}")
-    val mostKnown = ObservableField<String>("Most Known: ${score.mostKnownPerson}")
+    val current   = ObservableField<String>("${score.current}")
+    val high      = ObservableField<String>("${score.high}")
+    val mostKnown = ObservableField<String>("${score.mostKnownPerson}")
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {
         return { it -> ScoreItem((it as ScoreViewModel)) }

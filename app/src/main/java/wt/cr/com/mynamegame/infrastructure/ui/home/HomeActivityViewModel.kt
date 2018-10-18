@@ -6,6 +6,8 @@ import android.arch.lifecycle.MutableLiveData
 import android.content.SharedPreferences
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import android.os.CountDownTimer
+import android.os.Handler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +25,6 @@ import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
-import kotlin.math.absoluteValue
 
 enum class CurrentGameMode {
     NONE, NORMAL, MATT, HINT, CUSTOM
@@ -32,6 +33,7 @@ const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
 const val HIGH_SCORE_KEY = "highscore"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
+    var prefs: SharedPreferences = app().getSharedPreferences(PREFS_SCORE, 0)
     private var disposable: Disposable? = null
 
     //actions
@@ -40,7 +42,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val removeScoreSection  = LiveDataAction()
     val removePeopleSection = LiveDataAction()
     val normalErrorAction   = LiveDataActionWithData<String>()
-
     //live data
     val loadPeopleAction = MutableLiveData<List<PersonViewModel>>()
     val loadScoreAction  = MutableLiveData<ScoreViewModel>()
@@ -48,46 +49,30 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val highScore        = MutableLiveData<Int>()
     val currentStreak    = MutableLiveData<Int>()
     val showingPeople    = MutableLiveData<Boolean>()
+    //data
+    private var peopleViewModelList: MutableList<PersonViewModel>
 
     //booleans
     val showLoadingIndicator = ObservableBoolean(true)
     val isGameStarted        = ObservableBoolean(false)
     val hasUserGuessed       = ObservableBoolean(false)
-
     //strings
     val questionText       = ObservableField<String>("Who is: Mambo #5?")
-    val numberCorrectField = ObservableField<String>("Correct: 0")
-    val highScoreField     = ObservableField<String>("High Score: 0")
-
+    val numberCorrectField = ObservableField<String>(getString(R.string.correct_field_ext, getString(R.string.zero)))
+    val highScoreField     = ObservableField<String>(getString(R.string.high_score_field_ext, getString(R.string.zero)))
     //game mode
-    val selectedGameMode = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
-
-    //data
-    private var peopleViewModelList: MutableList<PersonViewModel>
+    val selectedGameMode = ObservableField<CurrentGameMode>(CurrentGameMode.NONE)
 
     //repo
     val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
 
-    lateinit var prefs: SharedPreferences
     init {
-        prefs = app().getSharedPreferences(PREFS_SCORE, 0)
         setCorrect(0)
         val high = prefs.getInt(HIGH_SCORE_KEY,0)
         highScore.postValue(high)
         setHigh(high)
-        selectedGameMode.set(CurrentGameMode.NONE)
-        peopleViewModelList = ArrayList()
+        peopleViewModelList = mutableListOf()
         loadData()
-    }
-
-    private fun setCorrect(correct: Int){
-        numberCorrect.value = correct
-        numberCorrectField.set(getString(R.string.correct_field, "$correct"))
-    }
-
-    private fun setHigh(high: Int){
-        highScore.value = high
-        highScoreField.set(getString(R.string.high_score_field, "$high"))
     }
 
     private lateinit var profiles: ArrayList<MyModel.Person>
@@ -137,15 +122,29 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             isGameStarted.set(false)
             hasUserGuessed.set(false)
         }else{
-            //TURN ON
-            isGameStarted.set(true)
-            if(showingPeople.value == false)
-                removeScoreSection.actionOccurred()
-            showingPeople.value = true
-            if(hasUserGuessed.get()) {
-                resetGame()
+            if(selectedGameMode.get() == CurrentGameMode.CUSTOM){
+                normalErrorAction.actionOccurred("NOT SETUP!")
+            }else {
+                //TURN ON
+                isGameStarted.set(true)
+                if (showingPeople.value == false)
+                    removeScoreSection.actionOccurred()
+                showingPeople.value = true
+                if (hasUserGuessed.get()) {
+                    resetGame()
+                }
+                loadPeopleAction.postValue(peopleViewModelList)
+
+                if (selectedGameMode.get() == CurrentGameMode.HINT) {
+                    setTimer()
+                }
             }
-            loadPeopleAction.postValue(peopleViewModelList)
+        }
+    }
+
+    private fun setTimer(){
+        if(isGameStarted.get()){
+            WordChanger(0, 8000)
         }
     }
 
@@ -192,9 +191,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             val score = MyModel.Score(
                     numberCorrect.value?:0,
                     highScore.value?:0,
-                    vm?.firstName
-                    //peopleViewModelList[0]
-            )
+                    vm?.firstName)
             val scoreViewModel = ScoreViewModel(
                     score,
                     this@HomeActivityViewModel::onShareClick,
@@ -202,6 +199,16 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                     this@HomeActivityViewModel::onResetTopClick)
             loadScoreAction.postValue(scoreViewModel)
         }
+    }
+
+    private fun setCorrect(correct: Int){
+        numberCorrect.value = correct
+        numberCorrectField.set(getString(R.string.correct_field_ext, "$correct"))
+    }
+
+    private fun setHigh(high: Int){
+        highScore.value = high
+        highScoreField.set(getString(R.string.high_score_field_ext, "$high"))
     }
     /**
      * QUESTION / ANSWER LOGIC
@@ -321,4 +328,34 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     fun IntRange.random() =
             ThreadLocalRandom.current().nextInt((endInclusive + 1) - start) +  start
+
+
+    fun WordChanger(num: Int, time: Long) {
+
+        val countDownTimer = object : CountDownTimer(time, 1000) {
+
+            override fun onTick(secondsUntilDone: Long) {
+            }
+
+            override fun onFinish() {
+                if(peopleViewModelList.size > 2){
+                    val newList = peopleViewModelList.toMutableList()
+                    newList.remove(theAnswer)
+                    val personToRemove = peopleViewModelList.get((0 until peopleViewModelList.size-1).random())
+                    peopleViewModelList.remove(personToRemove)
+                    loadPeopleAction.postValue(peopleViewModelList)
+                    setTimer()
+                }
+            }
+        }.start()}
+}
+
+class Run {
+    companion object {
+        fun after(delay: Long, process: () -> Unit) {
+            Handler().postDelayed({
+                process()
+            }, delay)
+        }
+    }
 }

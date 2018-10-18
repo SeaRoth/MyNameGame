@@ -1,9 +1,9 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/primary_light</item>
         <item name="android:windowNoTitle">true</item>
     </style>
 
@@ -16,18 +16,30 @@
         <item name="android:textSize">24sp</item>
         <item name="android:lineSpacingExtra">12sp</item>
         <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/black_61</item>
+        <item name="android:background">@color/black</item>
         <item name="android:fontFamily">@font/open_sans_regular</item>
         <item name="android:maxLines">3</item>
+    </style>
+
+    <style name="BottomQuestionTextStyle">
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineSpacingExtra">12sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/primary_dark</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:radius">16dp</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="ScoreTitleTheme">
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textSize">18sp</item>
         <item name="android:lineSpacingExtra">12sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/black_61</item>
+        <item name="android:textColor">@color/primary_dark</item>
         <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:alpha">0.4</item>
+        <item name="android:radius">16dp</item>
         <item name="android:maxLines">1</item>
     </style>
 
@@ -35,10 +47,20 @@
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textSize">26sp</item>
         <item name="android:lineSpacingExtra">12sp</item>
-        <item name="android:textColor">@color/errorRed</item>
-        <item name="android:background">@color/black_61</item>
+        <item name="android:textColor">@color/cadet_blue</item>
+        <item name="android:radius">8dp</item>
         <item name="android:fontFamily">@font/open_sans_regular</item>
         <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="TopScoreStyle">
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineSpacingExtra">4sp</item>
+        <item name="android:textColor">@color/primary_dark</item>
+        <item name="android:radius">8dp</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+        <item name="android:maxLines">1</item>
+
     </style>
 
 </resources>

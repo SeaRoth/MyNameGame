@@ -5,7 +5,6 @@ import wt.cr.com.mynamegame.domain.model.MyModel
 import io.reactivex.Observable
 
 interface ApiClient {
-
     @GET("profiles.json")
     fun getProfiles(): Observable<MyModel.Query>
 }
