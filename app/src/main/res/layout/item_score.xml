@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="@color/app_background"
         android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground">
 

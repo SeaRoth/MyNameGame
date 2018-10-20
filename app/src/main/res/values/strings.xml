@@ -15,6 +15,7 @@
     <string name="who_is_field">Who is: %s?</string>
     <string name="who_is_field_last">Who is: %s?</string>
     <string name="matthew">matthew</string>
+    <string name="retry">Retry</string>
 
     <!--ITEM SCORE-->
     <string name="reset_score">RESET SCORE</string>

@@ -30,3 +30,6 @@ Original Question: https://github.com/willowtreeapps/namegame_android
 
 ### View2
 ![Question](https://github.com/SeaRoth/MyNameGame/blob/master/2.png?raw=true)
+
+### View3
+![Question](https://github.com/SeaRoth/MyNameGame/blob/master/3.png?raw=true)

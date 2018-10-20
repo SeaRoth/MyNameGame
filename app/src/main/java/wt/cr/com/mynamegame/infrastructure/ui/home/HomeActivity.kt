@@ -15,6 +15,7 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
+import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
 
 class HomeActivity : BaseActivity(){
 
@@ -25,13 +26,16 @@ class HomeActivity : BaseActivity(){
     }
 
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
-
-    private val mainSection = Section()
     private val peopleSection = Section()
-    private var scoreSection = Section()
+    private var statSection = Section()
+    private var errorSection = Section()
 
     private val homeActivityViewModel : HomeActivityViewModel by lazy {
         ViewModelProviders.of(this).get(HomeActivityViewModel::class.java)
+    }
+
+    private fun callbackRetry(){
+        homeActivityViewModel.loadData()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,39 +45,29 @@ class HomeActivity : BaseActivity(){
             activityViewModel = homeActivityViewModel
         }
 
-        homeActivityViewModel.apiErrorAction.observe(this){ it ->
-            showApiError(it)
-        }
-
-        homeActivityViewModel.networkErrorAction.observe(this){
-            showSnackBar()
-        }
 
         homeActivityViewModel.normalErrorAction.observe(this){it ->
             saveUpdateView(save_update_view_act_list_detail, it)
         }
 
         homeActivityViewModel.loadPeopleAction.observe(this, Observer {
+            personGroupAdapter.clear()
+            personGroupAdapter.add(peopleSection)
             it?.let{ personViewModels -> peopleSection.update(personViewModels) }
         })
 
         homeActivityViewModel.loadScoreAction.observe(this, Observer {
-            if(homeActivityViewModel.showingPeople.value == true)
-                mainSection.remove(peopleSection)
-            scoreSection = Section()
-            it?.let { scoreViewModel -> scoreSection.add(scoreViewModel) }
-            mainSection.add(scoreSection)
+            statSection = Section()
+            personGroupAdapter.clear()
+            personGroupAdapter.add(statSection)
+            it?.let { scoreViewModel -> statSection.add(scoreViewModel) }
         })
 
-        homeActivityViewModel.removeScoreSection.observe(this){
-            if(homeActivityViewModel.showingPeople.value == false){
-                mainSection.remove(scoreSection)
-                mainSection.add(peopleSection)
-            }
-        }
-
-        homeActivityViewModel.removePeopleSection.observe(this){
-            mainSection.remove(peopleSection)
+        homeActivityViewModel.apiErrorAction.observe(this){ it ->
+            personGroupAdapter.clear()
+            personGroupAdapter.add(errorSection)
+            showApiError(it)
+            errorSection.add(NoConnectionViewModel(this::callbackRetry))
         }
         setupAdapter()
     }
@@ -82,8 +76,7 @@ class HomeActivity : BaseActivity(){
         rv_multi_item.layoutManager = LinearLayoutManager(this@HomeActivity)
         rv_multi_item.itemAnimator = DefaultItemAnimator()
         rv_multi_item.adapter = personGroupAdapter
-        mainSection.add(peopleSection)
-        personGroupAdapter.add(mainSection)
+        personGroupAdapter.add(peopleSection)
     }
 }
 

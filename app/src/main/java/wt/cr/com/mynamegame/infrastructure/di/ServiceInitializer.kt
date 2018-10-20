@@ -2,6 +2,7 @@ package wt.cr.com.mynamegame.infrastructure.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.CoroutineDispatcher
@@ -13,11 +14,13 @@ import retrofit2.converter.gson.GsonConverterFactory
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepository
+import wt.cr.com.mynamegame.infrastructure.ui.home.PREFS_SCORE
 
 class ServiceInitializer {
     companion object {
         fun initServices(application: Application) {
             initApplication(application)
+            initScoreSharedPreferences(application)
             initNetwork(application)
             initCoroutineContext()
             initRepositories()
@@ -39,6 +42,10 @@ class ServiceInitializer {
                         .build()
                 WTServiceLocator.put(Picasso::class.java, picasso)
             }
+        }
+
+        private fun initScoreSharedPreferences(application: Application) {
+            WTServiceLocator.put(SharedPreferences::class.java, application.getSharedPreferences(PREFS_SCORE, 0))
         }
 
         private fun initCoroutineContext() {

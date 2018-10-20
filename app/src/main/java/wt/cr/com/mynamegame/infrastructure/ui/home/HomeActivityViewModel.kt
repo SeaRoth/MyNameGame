@@ -7,63 +7,61 @@ import android.content.SharedPreferences
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.os.CountDownTimer
-import android.os.Handler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
-import wt.cr.com.mynamegame.infrastructure.common.utils.app
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
-import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 enum class CurrentGameMode {
-    NONE, NORMAL, MATT, HINT, CUSTOM
+    NORMAL, MATT, HINT, CUSTOM
 }
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
 const val HIGH_SCORE_KEY = "highscore"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
-    var prefs: SharedPreferences = app().getSharedPreferences(PREFS_SCORE, 0)
+    private var prefs: SharedPreferences = WTServiceLocator.resolve(SharedPreferences::class.java)
+            //app().getSharedPreferences(PREFS_SCORE, 0)
     private var disposable: Disposable? = null
 
     //actions
-    val apiErrorAction      = LiveDataActionWithData<String>()
-    val networkErrorAction  = LiveDataAction()
-    val removeScoreSection  = LiveDataAction()
-    val removePeopleSection = LiveDataAction()
-    val normalErrorAction   = LiveDataActionWithData<String>()
-    //live data
-    val loadPeopleAction = MutableLiveData<List<PersonViewModel>>()
-    val loadScoreAction  = MutableLiveData<ScoreViewModel>()
-    val numberCorrect    = MutableLiveData<Int>()
-    val highScore        = MutableLiveData<Int>()
-    val currentStreak    = MutableLiveData<Int>()
-    val showingPeople    = MutableLiveData<Boolean>()
-    //data
-    private var peopleViewModelList: MutableList<PersonViewModel>
+    val apiErrorAction         = LiveDataActionWithData<String>()
+    val normalErrorAction      = LiveDataActionWithData<String>()
+    //Live data
+    val loadPeopleAction       = MutableLiveData<List<PersonViewModel>>()
+    val loadScoreAction        = MutableLiveData<ScoreViewModel>()
+    val numberCorrect          = MutableLiveData<Int>()
+    val highScore              = MutableLiveData<Int>()
+    val currentStreak          = MutableLiveData<Int>()
+    val hasUserGuessed         = MutableLiveData<Boolean>()
+    var peopleViewModelList:      MutableList<PersonViewModel> = mutableListOf()
+    var peopleViewModelListFresh: MutableList<PersonViewModel> = mutableListOf()
 
-    //booleans
+    private lateinit var profiles: MutableList<MyModel.Person>
+    //Observables
+    val selectedGameMode    = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
     val showLoadingIndicator = ObservableBoolean(true)
     val isGameStarted        = ObservableBoolean(false)
-    val hasUserGuessed       = ObservableBoolean(false)
-    //strings
-    val questionText       = ObservableField<String>("Who is: Mambo #5?")
+    val showButton0          = ObservableBoolean(true)
+    val showButton1          = ObservableBoolean(true)
+    val showButton2          = ObservableBoolean(true)
+    val showButton3          = ObservableBoolean(true)
+    val showButton4          = ObservableBoolean(true)
+    val showButton5          = ObservableBoolean(true)
+    val questionText       = ObservableField<String>()
     val numberCorrectField = ObservableField<String>(getString(R.string.correct_field_ext, getString(R.string.zero)))
     val highScoreField     = ObservableField<String>(getString(R.string.high_score_field_ext, getString(R.string.zero)))
-    //game mode
-    val selectedGameMode = ObservableField<CurrentGameMode>(CurrentGameMode.NONE)
-
-    //repo
+    val secondsLeftField   = ObservableField<String>()
+    //Repo
     val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
 
     init {
@@ -71,12 +69,10 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         val high = prefs.getInt(HIGH_SCORE_KEY,0)
         highScore.postValue(high)
         setHigh(high)
-        peopleViewModelList = mutableListOf()
         loadData()
     }
 
-    private lateinit var profiles: ArrayList<MyModel.Person>
-    private fun loadData() {
+    fun loadData() {
         launch(UI) {
             showLoadingIndicator.set(true)
             disposable = WTServiceLocator.resolve(ApiClient::class.java).getProfiles()
@@ -84,13 +80,13 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             { result ->
+                                showLoadingIndicator.set(false)
                                 profiles = result.data
                                 normalMode()
-                                showLoadingIndicator.set(false)
                             },
                             { error ->
-                                apiErrorAction.actionOccurred(error.localizedMessage)
                                 showLoadingIndicator.set(false)
+                                apiErrorAction.actionOccurred(error.localizedMessage)
                             }
                     )
         }
@@ -100,7 +96,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
      * UI
      */
     private fun onImageClick(person: PersonViewModel){
-        hasUserGuessed.set(true)
+        hasUserGuessed.postValue(true)
         if(isGameStarted.get()) {
             if (person == theAnswer) {
                 answerCorrect()
@@ -113,24 +109,23 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onBottomBarClick(index: Int){
-        onImageClick(peopleViewModelList[index])
+        val userId = peopleViewModelListFresh[index].id.get()
+        val mViewModel = peopleViewModelList.first{ it.id.get() == userId }
+        onImageClick(mViewModel)
     }
 
     fun onStartClicked(){
         if(isGameStarted.get()){
             //TURN OFF
             isGameStarted.set(false)
-            hasUserGuessed.set(false)
+            hasUserGuessed.postValue(false)
         }else{
             if(selectedGameMode.get() == CurrentGameMode.CUSTOM){
                 normalErrorAction.actionOccurred("NOT SETUP!")
             }else {
                 //TURN ON
                 isGameStarted.set(true)
-                if (showingPeople.value == false)
-                    removeScoreSection.actionOccurred()
-                showingPeople.value = true
-                if (hasUserGuessed.get()) {
+                if (hasUserGuessed.value == true) {
                     resetGame()
                 }
                 loadPeopleAction.postValue(peopleViewModelList)
@@ -144,7 +139,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun setTimer(){
         if(isGameStarted.get()){
-            WordChanger(0, 8000)
+            HintTimer(0, 8000)
         }
     }
 
@@ -181,8 +176,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun showScoreSection(){
-        showingPeople.value = false
-        hasUserGuessed.set(false)
+        hasUserGuessed.postValue(false)
 
         val sorted = correcTable.toList().sortedBy { (_, value) -> value }
         val vm = profiles.firstOrNull { it.id.equals(sorted[0].first) }
@@ -239,7 +233,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             setCorrect(newScore?:-1)
             isGameStarted.set(false)
             resetGame()
-            removePeopleSection.actionOccurred()
             showScoreSection()
         }
     }
@@ -249,8 +242,35 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         if(peopleViewModelList.size < 2){
             resetGame()
         }else{
+            var index = peopleViewModelListFresh.indexOf(person)
+            showHideBottomButtons(index)
             peopleViewModelList.remove(person)
             loadPeopleAction.postValue(peopleViewModelList)
+        }
+    }
+
+    private fun showHideBottomButtons(hide: Int){
+        when (hide) {
+            6 -> {
+                showButton0.set(true)
+                showButton1.set(true)
+                showButton2.set(true)
+                showButton3.set(true)
+                showButton4.set(true)
+                showButton5.set(true)
+            }5 -> {
+                showButton5.set(false)
+            }4 -> {
+                showButton4.set(false)
+            }3 -> {
+                showButton3.set(false)
+            }2 -> {
+                showButton2.set(false)
+            }1 -> {
+                showButton1.set(false)
+            }0 -> {
+                showButton0.set(false)
+            }
         }
     }
     /**
@@ -261,6 +281,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
      * GAME MODES
      */
     private fun resetGame(){
+        showHideBottomButtons(6)
         when {
             selectedGameMode.get() == CurrentGameMode.NORMAL -> {
                 normalMode()
@@ -284,9 +305,11 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         peopleViewModelList.addAll(profiles
                 .shuffled()
                 .asSequence()
+                .filter { !(it.headshot.url?.contains("TEST1", true)?:false) }
                 .take(6)
                 .map { PersonViewModel("${i++}", it, this::onImageClick) }
                 .toList())
+        setFresh()
         setQuestionText()
         loadPeopleAction.postValue(peopleViewModelList)
     }
@@ -305,18 +328,26 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 .map {PersonViewModel("${i++}", it, this::onImageClick)}
                 .take(6)
                 .toList())
+        setFresh()
         setQuestionText()
         loadPeopleAction.postValue(peopleViewModelList)
     }
 
     fun hintMode(){
         selectedGameMode.set(CurrentGameMode.HINT)
+        setFresh()
         launch(UI) {
         }
     }
 
     fun fourMode(){
         selectedGameMode.set(CurrentGameMode.CUSTOM)
+        setFresh()
+    }
+
+    private fun setFresh(){
+        peopleViewModelListFresh.clear()
+        peopleViewModelListFresh.addAll(peopleViewModelList)
     }
     /**
      * GAME MODES
@@ -330,11 +361,12 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             ThreadLocalRandom.current().nextInt((endInclusive + 1) - start) +  start
 
 
-    fun WordChanger(num: Int, time: Long) {
+    fun HintTimer(num: Int, time: Long) {
 
         val countDownTimer = object : CountDownTimer(time, 1000) {
 
             override fun onTick(secondsUntilDone: Long) {
+                secondsLeftField.set("${secondsUntilDone/1000}")
             }
 
             override fun onFinish() {
@@ -348,14 +380,4 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
         }.start()}
-}
-
-class Run {
-    companion object {
-        fun after(delay: Long, process: () -> Unit) {
-            Handler().postDelayed({
-                process()
-            }, delay)
-        }
-    }
 }

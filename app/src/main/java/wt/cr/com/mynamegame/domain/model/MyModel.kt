@@ -12,7 +12,7 @@ object MyModel {
             val headshot: Headshot,
             val socialLinks: ArrayList<Social>
     )
-    data class Headshot(val url: String)
+    data class Headshot(val url: String?)
     data class Social(val type: String, val callToAction: String, val url: String)
     data class Score(
             val current: Int,
