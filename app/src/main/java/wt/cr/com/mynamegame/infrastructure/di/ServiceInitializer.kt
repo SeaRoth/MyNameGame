@@ -1,6 +1,7 @@
 package wt.cr.com.mynamegame.infrastructure.di
 
 import android.app.Application
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.SharedPreferences
 import com.squareup.picasso.OkHttp3Downloader
@@ -11,6 +12,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import wt.cr.com.mynamegame.infrastructure.data.MyDatabase
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepository
@@ -22,6 +24,7 @@ class ServiceInitializer {
             initApplication(application)
             initScoreSharedPreferences(application)
             initNetwork(application)
+            initDatabase(application)
             initCoroutineContext()
             initRepositories()
         }
@@ -42,6 +45,14 @@ class ServiceInitializer {
                         .build()
                 WTServiceLocator.put(Picasso::class.java, picasso)
             }
+        }
+
+        private fun initDatabase(application: Application){
+            val r = Room.databaseBuilder(application,
+                    MyDatabase::class.java,
+                    "CR-MyNameGame").allowMainThreadQueries()
+                    .build()
+            WTServiceLocator.put(MyDatabase::class.java, r)
         }
 
         private fun initScoreSharedPreferences(application: Application) {

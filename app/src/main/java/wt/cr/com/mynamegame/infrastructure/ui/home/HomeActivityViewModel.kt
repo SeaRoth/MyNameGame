@@ -17,6 +17,7 @@ import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
+import wt.cr.com.mynamegame.infrastructure.data.MyDatabase
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
@@ -27,10 +28,12 @@ enum class CurrentGameMode {
 }
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
 const val HIGH_SCORE_KEY = "highscore"
+const val LIFETIME_CORRECT_KEY = "lifetime.correct"
+const val LIFETIME_INCORRECT_KEY = "lifetime.incorrect"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private var prefs: SharedPreferences = WTServiceLocator.resolve(SharedPreferences::class.java)
-            //app().getSharedPreferences(PREFS_SCORE, 0)
+    private val dao: MyDatabase = WTServiceLocator.resolve(MyDatabase::class.java)
     private var disposable: Disposable? = null
 
     //actions
@@ -42,6 +45,8 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val numberCorrect          = MutableLiveData<Int>()
     val highScore              = MutableLiveData<Int>()
     val currentStreak          = MutableLiveData<Int>()
+    val lifetimeCorrect        = MutableLiveData<Int>()
+    val lifetimeIncorrect      = MutableLiveData<Int>()
     val hasUserGuessed         = MutableLiveData<Boolean>()
     var peopleViewModelList:      MutableList<PersonViewModel> = mutableListOf()
     var peopleViewModelListFresh: MutableList<PersonViewModel> = mutableListOf()
@@ -69,6 +74,8 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         val high = prefs.getInt(HIGH_SCORE_KEY,0)
         highScore.postValue(high)
         setHigh(high)
+        lifetimeCorrect.value = prefs.getInt(LIFETIME_CORRECT_KEY,0)
+        lifetimeIncorrect.value = prefs.getInt(LIFETIME_INCORRECT_KEY,0)
         loadData()
     }
 
@@ -83,6 +90,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                                 showLoadingIndicator.set(false)
                                 profiles = result.data
                                 normalMode()
+                                dao.personDao().insertPersonData(profiles[0])
                             },
                             { error ->
                                 showLoadingIndicator.set(false)
@@ -177,15 +185,16 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun showScoreSection(){
         hasUserGuessed.postValue(false)
-
         val sorted = correcTable.toList().sortedBy { (_, value) -> value }
         val vm = profiles.firstOrNull { it.id.equals(sorted[0].first) }
-
         launch(UI) {
-            val score = MyModel.Score(
+            val score =
+                    MyModel.Score(
                     numberCorrect.value?:0,
                     highScore.value?:0,
-                    vm?.firstName)
+                    vm?.firstName,
+                    lifetimeCorrect.value?:0,
+                    lifetimeIncorrect.value?:0)
             val scoreViewModel = ScoreViewModel(
                     score,
                     this@HomeActivityViewModel::onShareClick,
@@ -213,6 +222,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
      */
     val correcTable = mutableMapOf<String, Int>()
     private fun answerCorrect(){
+        lifetimeCorrect.value = lifetimeCorrect.value?.plus(1)
 
         if(correcTable.containsKey(theAnswer.id.get())) {
             val someAnswer = correcTable[theAnswer.id.get()?:""]?.plus(1)?:-1
@@ -235,9 +245,11 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             resetGame()
             showScoreSection()
         }
+        prefs.edit().putInt(LIFETIME_CORRECT_KEY, lifetimeCorrect.value?:0).apply()
     }
 
     private fun answerIncorrect(person: PersonViewModel){
+        lifetimeIncorrect.value = lifetimeIncorrect.value?.plus(1)
         setCorrect(0)
         if(peopleViewModelList.size < 2){
             resetGame()
@@ -247,6 +259,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             peopleViewModelList.remove(person)
             loadPeopleAction.postValue(peopleViewModelList)
         }
+        prefs.edit().putInt(LIFETIME_INCORRECT_KEY, lifetimeIncorrect.value?:0).apply()
     }
 
     private fun showHideBottomButtons(hide: Int){
@@ -305,7 +318,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         peopleViewModelList.addAll(profiles
                 .shuffled()
                 .asSequence()
-                .filter { !(it.headshot.url?.contains("TEST1", true)?:false) }
+                .filter { !(it.headshot?.url?.contains("TEST1", true)?:false) }
                 .take(6)
                 .map { PersonViewModel("${i++}", it, this::onImageClick) }
                 .toList())

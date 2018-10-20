@@ -25,6 +25,11 @@
     <string name="high_score">High Score:</string>
     <string name="most_known_person">Most Known Person:</string>
 
+    <!--STATS PAGE-->
+    <string name="lifetime_correct">Lifetime Correct</string>
+    <string name="lifetime_incorrect">Lifetime Incorrect</string>
+    <string name="percent_correct">% Correct</string>
+
     <!--ERRORS-->
     <string name="connectivity_error">Cannot connect to the internet</string>
     <string name="standard_error_message">We\'re sorry, something went wrong, and we couldn\'t complete your request. Please try again.</string>

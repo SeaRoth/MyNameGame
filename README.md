@@ -23,7 +23,13 @@ Uses/features/stuff:
 6. RXJava
 7. ObjectAnimator
 8. AndroidSpinKit
-9. ...
+9. SharedPreferences
+10. ...
+
+Upcoming:
+1. Local database
+2. Firebase integration
+3. ...
 
 Original Question: https://github.com/willowtreeapps/namegame_android
 
