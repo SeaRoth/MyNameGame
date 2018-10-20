@@ -21,7 +21,9 @@ Uses/features/stuff:
 4. Splash Activity
 5. Retrofit
 6. RXJava
-7. ...
+7. ObjectAnimator
+8. AndroidSpinKit
+9. ...
 
 Original Question: https://github.com/willowtreeapps/namegame_android
 

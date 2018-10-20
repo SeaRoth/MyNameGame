@@ -32,11 +32,11 @@
             android:minWidth="100dp"
             android:minHeight="100dp"
             app:imageUrl="@{viewModel.url}"
+            app:placeholder="@{@drawable/progress_animation}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:placeholder="@{@drawable/logo_black}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

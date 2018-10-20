@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import android.view.ViewGroup
+import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 
 @BindingConversion
@@ -22,6 +23,7 @@ fun loadImage(imageView: ImageView, url: String?, placeholder: Drawable) {
     WTServiceLocator.resolve(Picasso::class.java)
             .load(url)
             .placeholder(placeholder)
+            .error(R.drawable.baseline_error_black_18)
             .resize(100,100)
             .centerInside()
             .into(imageView)

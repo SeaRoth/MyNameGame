@@ -305,13 +305,22 @@
             app:layout_constraintBottom_toBottomOf="@+id/rv_multi_item"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <include
-            layout="@layout/tinted_loaded"
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kit"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="@{activityViewModel.showLoadingIndicator}"
+            app:SpinKit_Color="@color/primary_dark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:showProgress="@{activityViewModel.showLoadingIndicator}"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/textView12"

@@ -45,7 +45,6 @@ class HomeActivity : BaseActivity(){
             activityViewModel = homeActivityViewModel
         }
 
-
         homeActivityViewModel.normalErrorAction.observe(this){it ->
             saveUpdateView(save_update_view_act_list_detail, it)
         }
