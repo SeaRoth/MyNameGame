@@ -18,7 +18,12 @@ class ScoreViewModel(private val score: MyModel.Score,
     val mostKnown = ObservableField<String>("${score.mostKnownPerson}")
     val lifetimeCorrect    = ObservableField<String>("${score.lifetimeCorrect}")
     val lifetimeIncorrect  = ObservableField<String>("${score.lifetimeIncorrect}")
-    val lifetimePercentage = ObservableField<String>((score.lifetimeCorrect/score.lifetimeIncorrect*100).toString())
+    val lifetimePercentage = ObservableField<String>()
+
+    init {
+        val percentage = score.lifetimeCorrect/score.lifetimeIncorrect
+        lifetimePercentage.set("$percentage")
+    }
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {
         return { it -> ScoreItem((it as ScoreViewModel)) }

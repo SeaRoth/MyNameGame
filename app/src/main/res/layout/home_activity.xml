@@ -16,6 +16,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/cl_modes"
+            android:visibility="@{activityViewModel.selectedGameMode != CurrentGameMode.ERROR}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -299,6 +300,7 @@
             android:layout_margin="24dp"
             android:layout_marginEnd="48dp"
             android:layout_marginBottom="8dp"
+            android:visibility="@{activityViewModel.selectedGameMode != CurrentGameMode.ERROR}"
             android:backgroundTint="@{activityViewModel.isGameStarted ? @color/crimson : @color/forest_green}"
             android:src="@{activityViewModel.isGameStarted ? @android:drawable/ic_menu_close_clear_cancel : @android:drawable/ic_media_play}"
             android:onClick="@{v -> activityViewModel.onStartClicked()}"

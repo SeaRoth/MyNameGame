@@ -35,6 +35,7 @@ class HomeActivity : BaseActivity(){
     }
 
     private fun callbackRetry(){
+        personGroupAdapter.clear()
         homeActivityViewModel.loadData()
     }
 
@@ -66,7 +67,7 @@ class HomeActivity : BaseActivity(){
             personGroupAdapter.clear()
             personGroupAdapter.add(errorSection)
             showApiError(it)
-            errorSection.add(NoConnectionViewModel(this::callbackRetry))
+            errorSection.add(NoConnectionViewModel(it, this::callbackRetry))
         }
         setupAdapter()
     }
@@ -78,4 +79,3 @@ class HomeActivity : BaseActivity(){
         personGroupAdapter.add(peopleSection)
     }
 }
-

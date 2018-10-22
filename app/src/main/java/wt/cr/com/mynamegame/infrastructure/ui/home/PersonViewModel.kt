@@ -14,7 +14,7 @@ class PersonViewModel(private val numerino: String, private val person: MyModel.
     val first = ObservableField<String>(person.firstName)
     val last = ObservableField<String>(person.lastName)
     val full = ObservableField<String>(person.firstName + " " + person.lastName)
-    val url = ObservableField<String>("http:${person.headshot.url}")
+    val url = ObservableField<String>("http:${person.headshot?.url}")
     var visible = ObservableBoolean(true)
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {

@@ -10,22 +10,22 @@
     </data>
 
     <android.support.constraint.ConstraintLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
             android:id="@+id/text"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
+            android:text="@string/error_message_happy"
+            style="@style/ErrorTitleStyle"
+            app:layout_constraintBottom_toTopOf="@+id/textView21"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Target" />
+            tools:text="@string/error_message_happy" />
 
         <Button
             android:id="@+id/button5"
@@ -34,11 +34,30 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/retry"
+            android:layout_marginBottom="32dp"
+            android:textColor="@color/white"
+            android:background="@drawable/style_radius_button_sel"
             android:onClick="@{v -> viewModel.retryConnectionClick()}"
+            android:text="@string/retry"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text" />
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView21"
+            style="@style/ErrorMessageStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:text="@{viewModel.messageField}"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toTopOf="@+id/button5"
+            app:layout_constraintEnd_toEndOf="@+id/text"
+            app:layout_constraintStart_toStartOf="@+id/text"
+            tools:text="Cannot find thing" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

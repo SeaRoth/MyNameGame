@@ -17,14 +17,13 @@ import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
-import wt.cr.com.mynamegame.infrastructure.data.MyDatabase
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import java.util.concurrent.ThreadLocalRandom
 
 enum class CurrentGameMode {
-    NORMAL, MATT, HINT, CUSTOM
+    NORMAL, MATT, HINT, CUSTOM, ERROR
 }
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
 const val HIGH_SCORE_KEY = "highscore"
@@ -33,7 +32,6 @@ const val LIFETIME_INCORRECT_KEY = "lifetime.incorrect"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private var prefs: SharedPreferences = WTServiceLocator.resolve(SharedPreferences::class.java)
-    private val dao: MyDatabase = WTServiceLocator.resolve(MyDatabase::class.java)
     private var disposable: Disposable? = null
 
     //actions
@@ -90,11 +88,9 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                                 showLoadingIndicator.set(false)
                                 profiles = result.data
                                 normalMode()
-                                dao.personDao().insertPersonData(profiles[0])
                             },
                             { error ->
-                                showLoadingIndicator.set(false)
-                                apiErrorAction.actionOccurred(error.localizedMessage)
+                                errorMode(error.localizedMessage)
                             }
                     )
         }
@@ -356,6 +352,12 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     fun fourMode(){
         selectedGameMode.set(CurrentGameMode.CUSTOM)
         setFresh()
+    }
+
+    private fun errorMode(error: String){
+        selectedGameMode.set(CurrentGameMode.ERROR)
+        showLoadingIndicator.set(false)
+        apiErrorAction.actionOccurred(error)
     }
 
     private fun setFresh(){
