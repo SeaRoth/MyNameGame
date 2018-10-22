@@ -27,6 +27,7 @@ class HomeActivity : BaseActivity(){
 
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
     private val peopleSection = Section()
+    private var scoreSection = Section()
     private var statSection = Section()
     private var errorSection = Section()
 
@@ -57,10 +58,10 @@ class HomeActivity : BaseActivity(){
         })
 
         homeActivityViewModel.loadScoreAction.observe(this, Observer {
-            statSection = Section()
+            scoreSection = Section()
             personGroupAdapter.clear()
-            personGroupAdapter.add(statSection)
-            it?.let { scoreViewModel -> statSection.add(scoreViewModel) }
+            personGroupAdapter.add(scoreSection)
+            it?.let { scoreViewModel -> scoreSection.add(scoreViewModel) }
         })
 
         homeActivityViewModel.apiErrorAction.observe(this){ it ->
@@ -69,6 +70,16 @@ class HomeActivity : BaseActivity(){
             showApiError(it)
             errorSection.add(NoConnectionViewModel(it, this::callbackRetry))
         }
+
+        homeActivityViewModel.loadStatAction.observe(this, Observer {
+            statSection = Section()
+            statSection.setHeader(HighScoreHeaderItem("WORLDWIDE SCORES"))
+            personGroupAdapter.clear()
+            personGroupAdapter.add(statSection)
+
+            it?.let { statViewModel -> statSection.addAll(statViewModel) }
+        })
+
         setupAdapter()
     }
 

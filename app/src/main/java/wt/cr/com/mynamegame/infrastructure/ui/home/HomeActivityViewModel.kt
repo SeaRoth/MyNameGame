@@ -7,6 +7,9 @@ import android.content.SharedPreferences
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.os.CountDownTimer
+import android.util.Log
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -19,6 +22,7 @@ import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.addExampleUsers
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import java.util.concurrent.ThreadLocalRandom
 
@@ -40,6 +44,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     //Live data
     val loadPeopleAction       = MutableLiveData<List<PersonViewModel>>()
     val loadScoreAction        = MutableLiveData<ScoreViewModel>()
+    val loadStatAction         = MutableLiveData<MutableList<StatViewModel>>()
     val numberCorrect          = MutableLiveData<Int>()
     val highScore              = MutableLiveData<Int>()
     val currentStreak          = MutableLiveData<Int>()
@@ -49,7 +54,8 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     var peopleViewModelList:      MutableList<PersonViewModel> = mutableListOf()
     var peopleViewModelListFresh: MutableList<PersonViewModel> = mutableListOf()
 
-    private lateinit var profiles: MutableList<MyModel.Person>
+    private var profiles: MutableList<MyModel.Person> = mutableListOf()
+    private var highScores: MutableList<StatViewModel> = mutableListOf()
     //Observables
     val selectedGameMode    = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
     val showLoadingIndicator = ObservableBoolean(true)
@@ -75,6 +81,28 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         lifetimeCorrect.value = prefs.getInt(LIFETIME_CORRECT_KEY,0)
         lifetimeIncorrect.value = prefs.getInt(LIFETIME_INCORRECT_KEY,0)
         loadData()
+    }
+
+    private fun firebaseStuff(){
+        WTServiceLocator.resolve(FirebaseFirestore::class.java)
+                .collection("users")
+                .orderBy("highScore", Query.Direction.ASCENDING)
+                .limit(10)
+                .addSnapshotListener { documentSnapshot, error ->
+                    if (error != null) {
+                        Log.d("TIMBER","")
+                    } else if (documentSnapshot != null) {
+                        for(i in documentSnapshot.documents){
+                            val player = MyModel.Player(i.get("name").toString(), i.get("location").toString(), Integer.parseInt(i.get("highScore").toString()), i.get("twoCents").toString())
+                            highScores.add(StatViewModel(player, this::statClicked))
+                        }
+                        loadStatAction.postValue(highScores.sortedByDescending { it.score.get() }.toMutableList())
+                    }
+                }
+    }
+
+    private fun statClicked(statViewModel: StatViewModel){
+
     }
 
     fun loadData() {
@@ -163,7 +191,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun onShareClick(scoreViewModel: ScoreViewModel){
-        Timber.d("CLICKED!")
+        firebaseStuff()
     }
     /**
      * UI

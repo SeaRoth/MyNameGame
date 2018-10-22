@@ -3,6 +3,7 @@ package wt.cr.com.mynamegame.infrastructure.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.experimental.CoroutineDispatcher
@@ -24,6 +25,7 @@ class ServiceInitializer {
             initNetwork(application)
             initCoroutineContext()
             initRepositories()
+            initFirestore(application)
         }
 
         private fun initNetwork(application: Context){
@@ -42,6 +44,11 @@ class ServiceInitializer {
                         .build()
                 WTServiceLocator.put(Picasso::class.java, picasso)
             }
+        }
+
+        private fun initFirestore(application: Context){
+            var db = FirebaseFirestore.getInstance()
+            WTServiceLocator.put(FirebaseFirestore::class.java, db)
         }
 
         private fun initScoreSharedPreferences(application: Application) {

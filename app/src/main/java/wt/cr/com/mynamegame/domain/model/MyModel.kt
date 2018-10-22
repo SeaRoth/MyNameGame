@@ -18,4 +18,11 @@ object MyModel {
             val lifetimeCorrect: Int,
             val lifetimeIncorrect: Int
     )
+    data class Player(
+            val name: String,
+            val location: String?,
+            val highScore: Int,
+            val twoCents: String
+    )
+
 }
