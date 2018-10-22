@@ -10,7 +10,6 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
 class SplashActivityViewModel(app: Application): AndroidViewModel(app){
-
     //Actions
     val animationAction = LiveDataAction()
     //Observables
