@@ -2,22 +2,19 @@ package wt.cr.com.mynamegame.infrastructure.ui.home
 
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
+import android.util.Log
 import com.xwray.groupie.databinding.BindableItem
+import timber.log.Timber
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
 class HowViewModel(private val score: MyModel.Score,
-                   val callbackShare: (HowViewModel) -> Unit,
-                   val callbackReset: (HowViewModel) -> Unit,
-                   val callbackResetTop: (HowViewModel) -> Unit)
+                   val callbackViewLocal: (HowViewModel) -> Unit,
+                   val callbackUpload: (HowViewModel) -> Unit,
+                   val callbackViewWorld: (HowViewModel) -> Unit)
     : BaseBindableViewModel(){
 
     //observables
-    val current   = ObservableField<String>("${score.current}")
-    val high      = ObservableField<String>("${score.high}")
-    val mostKnown = ObservableField<String>("${score.mostKnownPerson}")
-    val lifetimeCorrect    = ObservableField<String>("${score.lifetimeCorrect}")
-    val lifetimeIncorrect  = ObservableField<String>("${score.lifetimeIncorrect}")
     val lifetimePercentage = ObservableField<String>()
 
     init {
@@ -29,15 +26,19 @@ class HowViewModel(private val score: MyModel.Score,
         return { it -> HowItem((it as HowViewModel)) }
     }
 
-    fun scoreShare(){
-        callbackShare(this)
+    fun onStartClicked(){
+        Timber.i( "WHJAT")
     }
 
-    fun scoreReset(){
-        callbackReset(this)
+    fun onClickScoreView(){
+        callbackViewLocal(this)
     }
 
-    fun scoreResetTop(){
-        callbackResetTop(this)
+    fun onClickScoreUpload(){
+        callbackUpload(this)
+    }
+
+    fun onClickScoreViewWorld(){
+        callbackViewWorld(this)
     }
 }

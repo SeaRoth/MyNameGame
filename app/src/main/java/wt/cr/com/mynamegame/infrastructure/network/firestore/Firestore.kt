@@ -1,17 +1,9 @@
 package wt.cr.com.mynamegame.infrastructure.network.firestore
 
 import android.util.Log
-import com.airbnb.lottie.parser.IntegerParser
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
-import com.google.firebase.firestore.QuerySnapshot
-import wt.cr.com.mynamegame.infrastructure.ui.home.StatViewModel
 
 class Firestore {
 
@@ -26,11 +18,15 @@ class Firestore {
         }
 
         fun addExampleUsers(){
-            val player = MyModel.Player("Curry", "Amsterdam, NVM", 12, "I plead the fifth")
+            val player = MyModel.Player("Curry", "Amsterdam, NVM", 2, "Charlie Brown")
             val user = createUser(player)
             addAPlayer(player)
-            val player2 = MyModel.Player("Norman", "BRUNO MARS",15, "I plead the fifth")
+            val player2 = MyModel.Player("Norman", "BRUNO MARS",1, "The Fighter and the kid")
             val user2 = createUser(player2)
+            addAPlayer(player2)
+
+            val player3 = MyModel.Player("Johnny Walker", "123 12th street",3, "Morning Rituals")
+            val user4 = createUser(player2)
             addAPlayer(player2)
         }
 

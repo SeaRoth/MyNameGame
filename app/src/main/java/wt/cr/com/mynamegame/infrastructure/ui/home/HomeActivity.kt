@@ -1,11 +1,14 @@
 package wt.cr.com.mynamegame.infrastructure.ui.home
 
+import android.app.PendingIntent
+import android.app.TaskStackBuilder
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import com.xwray.groupie.GroupAdapter
@@ -15,7 +18,9 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.addExampleUsers
 import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
+import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
 
 class HomeActivity : BaseActivity(){
 
@@ -71,15 +76,9 @@ class HomeActivity : BaseActivity(){
             errorSection.add(NoConnectionViewModel(it, this::callbackRetry))
         }
 
-        homeActivityViewModel.loadStatAction.observe(this, Observer {
-            statSection = Section()
-            statSection.setHeader(HighScoreHeaderItem("WORLDWIDE SCORES"))
-            personGroupAdapter.clear()
-            personGroupAdapter.add(statSection)
-
-            it?.let { statViewModel -> statSection.addAll(statViewModel) }
-        })
-
+        homeActivityViewModel.loadStatAction.observe(this){
+            startActivity(StatsActivity.newIntent(this))
+        }
         setupAdapter()
     }
 

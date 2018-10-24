@@ -7,7 +7,7 @@ import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
 class ScoreViewModel(private val score: MyModel.Score,
-                     val callbackShare: (ScoreViewModel) -> Unit,
+                     val callbackShare: () -> Unit,
                      val callbackReset: (ScoreViewModel) -> Unit,
                      val callbackResetTop: (ScoreViewModel) -> Unit)
     : BaseBindableViewModel(){
@@ -21,8 +21,10 @@ class ScoreViewModel(private val score: MyModel.Score,
     val lifetimePercentage = ObservableField<String>()
 
     init {
-        val percentage = score.lifetimeCorrect/score.lifetimeIncorrect
-        lifetimePercentage.set("$percentage")
+        val v1 = score.lifetimeCorrect
+        val v2 = score.lifetimeIncorrect
+        val percentage = v1.div(v2)
+        lifetimePercentage.set("$percentage%")
     }
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {
@@ -30,7 +32,7 @@ class ScoreViewModel(private val score: MyModel.Score,
     }
 
     fun scoreShare(){
-        callbackShare(this)
+        callbackShare()
     }
 
     fun scoreReset(){

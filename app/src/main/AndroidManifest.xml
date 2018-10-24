@@ -10,16 +10,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:name=".infrastructure.NameGameApplication"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/HomeActivityTheme">
 
         <activity android:name=".infrastructure.ui.home.HomeActivity"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/HomeActivityTheme">
+        </activity>
+
+        <activity android:name=".infrastructure.ui.stats.StatsActivity"
+            android:screenOrientation="sensorPortrait"
+            android:parentActivityName=".infrastructure.ui.home.HomeActivity"
+            android:theme="@style/StatsActivityTheme">
         </activity>
 
         <activity android:name=".infrastructure.ui.splash.SplashActivity"
             android:screenOrientation="sensorPortrait"
-            android:theme="@style/AppTheme">
+            android:theme="@style/HomeActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

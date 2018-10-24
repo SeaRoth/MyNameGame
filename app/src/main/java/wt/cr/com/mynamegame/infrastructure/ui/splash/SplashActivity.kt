@@ -32,7 +32,7 @@ class SplashActivity : BaseActivity() {
 
     private fun animateLogo(){
         val centerY = (cv_splash.height/2).toFloat() - (cl_splash.height/2).toFloat()
-        val animationMs:Long = 1200
+        val animationMs:Long = 800
         val propertyPositionForward = PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, centerY)
         val propertyAlphaForward    = PropertyValuesHolder.ofFloat(View.ALPHA, 0f,1f)
         val forward = ObjectAnimator.ofPropertyValuesHolder(cv_splash, propertyPositionForward, propertyAlphaForward)
@@ -46,7 +46,7 @@ class SplashActivity : BaseActivity() {
 
                 val imageViewObjectAnimator = ObjectAnimator.ofFloat(cv_splash,
                         "rotation", 0f, 360f)
-                imageViewObjectAnimator.duration = 1000
+                imageViewObjectAnimator.duration = 800
                 imageViewObjectAnimator.start()
 
                 imageViewObjectAnimator.addListener(object: AnimatorListenerAdapter(){

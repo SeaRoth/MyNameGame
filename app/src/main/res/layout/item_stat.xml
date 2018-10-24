@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="wt.cr.com.mynamegame.infrastructure.ui.home.StatViewModel"/>
+            type="wt.cr.com.mynamegame.infrastructure.ui.stats.StatViewModel"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -13,8 +13,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="8dp"
-        android:background="@color/zxing_transparent"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="6dp"
+        android:background="@{viewModel.isEven() ? @color/medium_slate_blue : @color/dark_slate_gray}"
         android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground"
         android:onClick="@{v -> viewModel.onClick()}">
@@ -22,57 +23,69 @@
 
         <TextView
             android:id="@+id/textView22"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@{viewModel.name}"
-            android:textAlignment="center"
-            android:textSize="12sp"
+            android:textAlignment="textStart"
+            android:maxLines="2"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Curry Powder Fries" />
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@{viewModel.location}"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView22"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Location" />
 
         <TextView
             android:id="@+id/textView23"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:maxLines="3"
             android:text="@{viewModel.twoCents}"
             android:textAlignment="center"
-            android:textSize="12sp"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/textView24"
             app:layout_constraintStart_toEndOf="@+id/textView25"
-            app:layout_constraintTop_toTopOf="@+id/textView22"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="Here is my two cents im not really sure how long its going to be and there might be a max number ??" />
 
         <TextView
             android:id="@+id/textView24"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@color/chocolate"
             android:padding="3dp"
             android:text="@{viewModel.score}"
             android:textAlignment="center"
             android:textColor="@color/_light_green"
             android:textSize="24sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView23"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/textView23"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="12" />
 
-        <TextView
-            android:id="@+id/textView25"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@{viewModel.location}"
-            android:textSize="10sp"
-            app:layout_constraintBottom_toBottomOf="@+id/textView22"
-            app:layout_constraintStart_toEndOf="@+id/textView22"
-            app:layout_constraintTop_toTopOf="@+id/textView22" />
     </android.support.constraint.ConstraintLayout>
 </layout>

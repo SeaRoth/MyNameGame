@@ -69,6 +69,8 @@ dependencies {
     // Timber
     implementation "com.jakewharton.timber:timber:$timber_version"
 
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
     // Ok HTTP
     implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"

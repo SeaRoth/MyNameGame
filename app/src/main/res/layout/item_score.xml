@@ -18,7 +18,7 @@
 
         <TextView
             android:id="@+id/textView20"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -30,7 +30,7 @@
 
         <TextView
             android:id="@+id/textView19"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -41,7 +41,7 @@
 
         <TextView
             android:id="@+id/textView18"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -53,7 +53,7 @@
 
         <TextView
             android:id="@+id/textView16"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -65,7 +65,7 @@
 
         <TextView
             android:id="@+id/textView15"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -77,7 +77,7 @@
 
         <TextView
             android:id="@+id/textView17"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -88,7 +88,7 @@
 
         <TextView
             android:id="@+id/textView9"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -101,7 +101,7 @@
 
         <TextView
             android:id="@+id/textView6"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -113,7 +113,7 @@
 
         <TextView
             android:id="@+id/textView7"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -126,7 +126,7 @@
 
         <TextView
             android:id="@+id/textView10"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -138,7 +138,7 @@
 
         <TextView
             android:id="@+id/textView8"
-            style="@style/ScoreTitleTheme"
+            style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -149,7 +149,7 @@
 
         <TextView
             android:id="@+id/textView11"
-            style="@style/ScoreItemTheme"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -164,45 +164,50 @@
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/style_radius_button_sel"
             android:onClick="@{v -> viewModel.scoreReset()}"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/reset_score"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/button3"
-            app:layout_constraintEnd_toEndOf="@+id/button4"
-            app:layout_constraintStart_toStartOf="@+id/button4" />
+            android:textSize="12sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button3" />
 
         <Button
             android:id="@+id/button3"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/style_radius_button_sel"
             android:onClick="@{v -> viewModel.scoreShare()}"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="@string/high_score"
+            android:text="@string/view_high_scores"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toTopOf="@+id/button4"
-            app:layout_constraintEnd_toEndOf="@+id/button4"
-            app:layout_constraintStart_toStartOf="@+id/button4" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <Button
             android:id="@+id/button4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginBottom="24dp"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:onClick="@{v -> viewModel.scoreResetTop()}"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/style_radius_button_sel"
+            android:onClick="@{v -> viewModel.scoreResetTop()}"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/reset_top_score"
             android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button3" />
     </android.support.constraint.ConstraintLayout>
 </layout>

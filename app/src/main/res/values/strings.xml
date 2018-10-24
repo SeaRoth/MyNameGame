@@ -23,12 +23,35 @@
     <string name="share_score">SHARE SCORE</string>
     <string name="current_streak">Current Streak:</string>
     <string name="high_score">High Score:</string>
+    <string name="view_high_scores">View High Scores</string>
     <string name="most_known_person">Most Known Person:</string>
+
+    <!--HIGH SCORE HEADER-->
+    <string name="name">Name</string>
+    <string name="name_caret">Name^</string>
+    <string name="location">Location</string>
+    <string name="location_caret">Location^</string>
+    <string name="two_cents">Two Cents</string>
+    <string name="two_cents_caret">Two Cents^</string>
+    <string name="score">Score</string>
+    <string name="score_caret">Score^</string>
+
+
+    <!--HOW TO PAGE-->
+    <string name="welcome_name_game">Welcome to the Name Game</string>
+    <string name="one_game_mode">1. Select a Game Mode</string>
+    <string name="two_press_play">2. Press Play</string>
+    <string name="three_make_guess">3. Make a Guess</string>
+
+    <string name="view_personal_stats">View Personal Stats</string>
+    <string name="upload_stats">Upload Stats</string>
+    <string name="view_world_stats">View Worldwide Stats</string>
 
     <!--STATS PAGE-->
     <string name="lifetime_correct">Lifetime Correct</string>
     <string name="lifetime_incorrect">Lifetime Incorrect</string>
     <string name="percent_correct">% Correct</string>
+    <string name="world_stats">Worldwide Stats</string>
 
     <!--ERRORS-->
     <string name="connectivity_error">Cannot connect to the internet</string>
