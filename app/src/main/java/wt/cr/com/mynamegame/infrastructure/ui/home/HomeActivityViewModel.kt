@@ -50,7 +50,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val lifetimeIncorrect      = MutableLiveData<Int>()
     val hasUserGuessed         = MutableLiveData<Boolean>()
     var peopleViewModelList:      MutableList<PersonViewModel> = mutableListOf()
-    var peopleViewModelListFresh: MutableList<PersonViewModel> = mutableListOf()
 
     private var profiles: MutableList<MyModel.Person> = mutableListOf()
     //Observables
@@ -116,8 +115,8 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onBottomBarClick(index: Int){
-        val userId = peopleViewModelListFresh[index].id.get()
-        val mViewModel = peopleViewModelList.first{ it.id.get() == userId }
+        val mViewModel = peopleViewModelList[index]
+        //val mViewModel = peopleViewModelList.first{ it.id.get() == userId }
         onImageClick(mViewModel)
     }
 
@@ -253,8 +252,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         if(peopleViewModelList.size < 2){
             resetGame()
         }else{
-            var index = peopleViewModelListFresh.indexOf(person)
-            showHideBottomButtons(index)
+            showHideBottomButtons(peopleViewModelList.size - 1)
             peopleViewModelList.remove(person)
             loadPeopleAction.postValue(peopleViewModelList)
         }
@@ -321,7 +319,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 .take(6)
                 .map { PersonViewModel("${i++}", it, this::onImageClick) }
                 .toList())
-        setFresh()
         setQuestionText()
         loadPeopleAction.postValue(peopleViewModelList)
     }
@@ -340,21 +337,16 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 .map {PersonViewModel("${i++}", it, this::onImageClick)}
                 .take(6)
                 .toList())
-        setFresh()
         setQuestionText()
         loadPeopleAction.postValue(peopleViewModelList)
     }
 
     fun hintMode(){
         selectedGameMode.set(CurrentGameMode.HINT)
-        setFresh()
-        launch(UI) {
-        }
     }
 
     fun fourMode(){
         selectedGameMode.set(CurrentGameMode.CUSTOM)
-        setFresh()
     }
 
     private fun errorMode(error: String){
@@ -363,10 +355,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         apiErrorAction.actionOccurred(error)
     }
 
-    private fun setFresh(){
-        peopleViewModelListFresh.clear()
-        peopleViewModelListFresh.addAll(peopleViewModelList)
-    }
     /**
      * GAME MODES
      */

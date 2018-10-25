@@ -7,7 +7,7 @@ import com.xwray.groupie.databinding.BindableItem
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
-class PersonViewModel(private val numerino: String, private val person: MyModel.Person, val personClickListener: (PersonViewModel) -> Unit): BaseBindableViewModel(){
+class PersonViewModel(numerino: String, person: MyModel.Person, val personClickListener: (PersonViewModel) -> Unit): BaseBindableViewModel(){
     //observables
     val number = ObservableField<String>(numerino)
     val id = ObservableField<String>(person.id)
@@ -19,6 +19,10 @@ class PersonViewModel(private val numerino: String, private val person: MyModel.
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {
         return { it -> PersonItem((it as PersonViewModel)) }
+    }
+
+    override fun getSpanSize(spanCount: Int, position: Int): Int {
+        return spanCount / 3
     }
 
     fun onClick() {

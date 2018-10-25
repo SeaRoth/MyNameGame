@@ -26,6 +26,10 @@ abstract class BaseBindableViewModel : Group {
         }
     }
 
+    open fun getSpanSize(spanCount: Int, position: Int): Int {
+        return spanCount / 3
+    }
+
     override fun getItemCount(): Int {
         return delegateItem.itemCount
     }

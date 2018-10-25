@@ -1,9 +1,24 @@
 # MyNameGame
 
-The original mission was written in Java and didn't use databinding so for this interview project I decided to start from scratch and use Kotlin and the Android Support Library with MVVM architecture.
+This is my version of the name game. The original template was written in Java and was over two years old.
 
-## Your mission
+![](screencast.gif)
 
+## Outside Perspective
+1. Turn on the game and press start (Green arrow)
+2. Make a guess who you think matches the name at the bottom
+3. Change modes at the top
+4. View worldwide stats by clicking "VIEW HIGH SCORES" after successfully guessing someone
+5. Insert your stats into the worldwide database 
+
+## Inside Perspective
+1. Uses Retrofit to call endpoint that returns JSON and it's formatted into POKOs (plain old kotlin objects)
+2. Place six random people on the board using Groupie and RecyclerView
+3. Listen for event clicks on the images or bottom group of buttons
+4. Keep track of user's score via shared preferences
+5. Keep track of worldwide scores via Firestore and allow users to opt-in
+
+## Your mission //START// (criteria given)
 Present the user with six faces and ask them to identify the listed name. To spruce things up, implement a few features of your choice.
 
 1. Stat tracking. How many correct / incorrect attempts did the user make? How long does it take on average for a person to identify the subject?
@@ -14,7 +29,9 @@ Present the user with six faces and ask them to identify the listed name. To spr
 4. Hint mode. As people wait, faces disappear until only the correct one is left.
 5. Insert your own idea here!
 
-Uses/features/stuff:
+## Your mission //END//
+
+## The inside stuff:
 1. Kotlin
 2. MVVM / databinding
 3. Groupie RecyclerView adapter
@@ -24,12 +41,13 @@ Uses/features/stuff:
 7. ObjectAnimator
 8. AndroidSpinKit
 9. SharedPreferences
-10. ...
+10. Firestore for worldwide stats
 
-Upcoming:
-1. Local database
-2. Firebase integration
-3. ...
+## Android Stuff:
+1. Gradle 3.2.1
+2. Kotlin 1.2.71
+3. Gradle Dist 4.10.2-all
+4. Three activities (Splash, Home, Stats)
 
 Original Question: https://github.com/willowtreeapps/namegame_android
 
@@ -41,3 +59,6 @@ Original Question: https://github.com/willowtreeapps/namegame_android
 
 ### View3
 ![Question](https://github.com/SeaRoth/MyNameGame/blob/master/3.png?raw=true)
+
+### View4
+![Question](https://github.com/SeaRoth/MyNameGame/blob/master/4.png?raw=true)

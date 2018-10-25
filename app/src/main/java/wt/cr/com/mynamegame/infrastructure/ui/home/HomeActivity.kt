@@ -1,25 +1,23 @@
 package wt.cr.com.mynamegame.infrastructure.ui.home
 
-import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.GridLayoutManager
 import com.xwray.groupie.GroupAdapter
 import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
+import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
-import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.addExampleUsers
 import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
+import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
 
 class HomeActivity : BaseActivity(){
@@ -31,9 +29,13 @@ class HomeActivity : BaseActivity(){
     }
 
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
-    private val peopleSection = Section()
+
+    private lateinit var groupLayoutManager: GridLayoutManager
+    private lateinit var rainbow200: IntArray
+    private var peopleSection  = Section()
+    private var updatingGroup    = Section()
+    private var updatableItems = ArrayList<UpdatableItem>()
     private var scoreSection = Section()
-    private var statSection = Section()
     private var errorSection = Section()
 
     private val homeActivityViewModel : HomeActivityViewModel by lazy {
@@ -47,9 +49,21 @@ class HomeActivity : BaseActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        rainbow200 = resources.getIntArray(R.array.rainbow_200)
+
+
 
         DataBindingUtil.setContentView<HomeActivityBinding>(this, R.layout.home_activity).apply {
             activityViewModel = homeActivityViewModel
+
+        }
+
+        personGroupAdapter.apply {
+            spanCount = 6
+        }
+
+        groupLayoutManager = GridLayoutManager(this, personGroupAdapter.spanCount).apply {
+            spanSizeLookup = personGroupAdapter.spanSizeLookup
         }
 
         homeActivityViewModel.normalErrorAction.observe(this){it ->
@@ -58,8 +72,27 @@ class HomeActivity : BaseActivity(){
 
         homeActivityViewModel.loadPeopleAction.observe(this, Observer {
             personGroupAdapter.clear()
+
+            val width = this.resources.displayMetrics.widthPixels
+            val height = this.resources.displayMetrics.heightPixels
+
+            val rv_height = rv_multi_item.layoutParams.height
+            val rv_width = rv_multi_item.layoutParams.width
+
+            Timber.d("${rv_height} and ${rv_width} ")
+
+
+            peopleSection = Section()
+            updatingGroup = Section()
+            updatableItems.clear()
+            var i = 1
+            it?.forEach {pvm ->
+                updatableItems.add(UpdatableItem(rainbow200[i], i, pvm.url.get()?:""))
+                i++
+            }
+            updatingGroup.update(updatableItems)
+            peopleSection.add(updatingGroup)
             personGroupAdapter.add(peopleSection)
-            it?.let{ personViewModels -> peopleSection.update(personViewModels) }
         })
 
         homeActivityViewModel.loadScoreAction.observe(this, Observer {
@@ -80,12 +113,14 @@ class HomeActivity : BaseActivity(){
             startActivity(StatsActivity.newIntent(this))
         }
         setupAdapter()
+
+
     }
 
     private fun setupAdapter(){
-        rv_multi_item.layoutManager = LinearLayoutManager(this@HomeActivity)
+        rv_multi_item.layoutManager = groupLayoutManager
         rv_multi_item.itemAnimator = DefaultItemAnimator()
         rv_multi_item.adapter = personGroupAdapter
-        personGroupAdapter.add(peopleSection)
+        //personGroupAdapter.add(peopleSection)
     }
 }

@@ -16,9 +16,12 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/cl_modes"
-            android:visibility="@{activityViewModel.selectedGameMode != CurrentGameMode.ERROR}"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="@{activityViewModel.selectedGameMode != CurrentGameMode.ERROR}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/save_update_view_act_list_detail"
@@ -32,13 +35,13 @@
                 android:textColor="@android:color/white"
                 android:textSize="12sp"
                 android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="parent"
-                />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/textView2"
+                style="@style/CurrentScoreTextStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -47,7 +50,6 @@
                 android:text="@{activityViewModel.numberCorrectField}"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                style="@style/CurrentScoreTextStyle"
                 app:layout_constraintEnd_toStartOf="@+id/tv_game_modes"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -60,25 +62,25 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/game_modes"
+                android:textColor="@color/primary_dark"
                 android:textSize="24sp"
                 android:visibility="@{!activityViewModel.isGameStarted}"
-                android:textColor="@color/primary_dark"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_top_score"
+                style="@style/CurrentScoreTextStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="@{activityViewModel.highScoreField}"
+                android:textAlignment="viewEnd"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textAlignment="viewEnd"
-                style="@style/CurrentScoreTextStyle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_game_modes"
                 app:layout_constraintTop_toTopOf="parent"
@@ -104,9 +106,9 @@
                     android:layout_weight="1"
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.NORMAL ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.normalMode()}"
-                    android:textColor="@color/white"
                     android:singleLine="true"
                     android:text="@string/normal"
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:typeface="sans" />
@@ -121,9 +123,9 @@
                     android:layout_weight="1"
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.MATT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.mattMode()}"
+                    android:singleLine="true"
                     android:text="@string/matt"
                     android:textColor="@color/white"
-                    android:singleLine="true"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:typeface="sans" />
@@ -138,9 +140,9 @@
                     android:layout_weight="1"
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.HINT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.hintMode()}"
+                    android:singleLine="true"
                     android:text="@string/hint"
                     android:textColor="@color/white"
-                    android:singleLine="true"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:typeface="sans" />
@@ -156,9 +158,9 @@
                     android:layout_weight="1"
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.CUSTOM ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.fourMode()}"
+                    android:singleLine="true"
                     android:text="@string/four"
                     android:textColor="@color/white"
-                    android:singleLine="true"
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:typeface="sans" />
@@ -177,7 +179,7 @@
             app:layout_marginTop="@{activityViewModel.isGameStarted ? 50 : 4}" />
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/ll_bottom_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/light_grey"
@@ -292,7 +294,7 @@
             style="@style/QuestionStyle"
             android:text="@{activityViewModel.questionText}"
             android:visibility="@{activityViewModel.isGameStarted}"
-            app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+            app:layout_constraintBottom_toTopOf="@+id/ll_bottom_buttons"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="WHO IS: MATT KEMP?" />
