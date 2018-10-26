@@ -12,6 +12,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
@@ -20,8 +21,9 @@ import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
-import wt.cr.com.mynamegame.infrastructure.ui.stats.StatViewModel
+import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import java.util.concurrent.ThreadLocalRandom
+import java.util.function.Predicate
 
 enum class CurrentGameMode {
     NORMAL, MATT, HINT, CUSTOM, ERROR
@@ -34,13 +36,14 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private var prefs: SharedPreferences = WTServiceLocator.resolve(SharedPreferences::class.java)
     private var disposable: Disposable? = null
+    private lateinit var rainbow200: IntArray
 
     //actions
     val loadStatAction         = LiveDataAction()
     val apiErrorAction         = LiveDataActionWithData<String>()
     val normalErrorAction      = LiveDataActionWithData<String>()
     //Live data
-    val loadPeopleAction       = MutableLiveData<List<PersonViewModel>>()
+    val loadPeopleAction       = MutableLiveData<List<UpdatableItem>>()
     val loadScoreAction        = MutableLiveData<ScoreViewModel>()
 
     val numberCorrect          = MutableLiveData<Int>()
@@ -49,11 +52,11 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val lifetimeCorrect        = MutableLiveData<Int>()
     val lifetimeIncorrect      = MutableLiveData<Int>()
     val hasUserGuessed         = MutableLiveData<Boolean>()
-    var peopleViewModelList:      MutableList<PersonViewModel> = mutableListOf()
+    var updatableItemList:   MutableList<UpdatableItem> = mutableListOf()
 
     private var profiles: MutableList<MyModel.Person> = mutableListOf()
     //Observables
-    val selectedGameMode    = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
+    val selectedGameMode     = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
     val showLoadingIndicator = ObservableBoolean(true)
     val isGameStarted        = ObservableBoolean(false)
     val showButton0          = ObservableBoolean(true)
@@ -70,6 +73,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
 
     init {
+        rainbow200 = app.resources.getIntArray(R.array.rainbow_200)
         setCorrect(0)
         val high = prefs.getInt(HIGH_SCORE_KEY,0)
         highScore.postValue(high)
@@ -101,7 +105,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     /**
      * UI
      */
-    private fun onImageClick(person: PersonViewModel){
+    private fun onImageClick(person: UpdatableItem){
         hasUserGuessed.postValue(true)
         if(isGameStarted.get()) {
             if (person == theAnswer) {
@@ -115,9 +119,9 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onBottomBarClick(index: Int){
-        val mViewModel = peopleViewModelList[index]
-        //val mViewModel = peopleViewModelList.first{ it.id.get() == userId }
-        onImageClick(mViewModel)
+        val mViewModel = updatableItemList[index]
+        //val mViewModel = updatableItemList.first{ it.id.get() == userId }
+        mViewModel.let { onImageClick(it) }
     }
 
     fun onStartClicked(){
@@ -134,7 +138,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 if (hasUserGuessed.value == true) {
                     resetGame()
                 }
-                loadPeopleAction.postValue(peopleViewModelList)
+                loadPeopleAction.postValue(updatableItemList)
 
                 if (selectedGameMode.get() == CurrentGameMode.HINT) {
                     setTimer()
@@ -174,11 +178,11 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     /**
      * QUESTION / ANSWER LOGIC
      */
-    private lateinit var theAnswer: PersonViewModel
+    private lateinit var theAnswer: UpdatableItem
     private fun setQuestionText(){
-        val num = (0 until peopleViewModelList.size-1).random()
-        theAnswer = peopleViewModelList[num]
-        questionText.set(getString(R.string.who_is_field, theAnswer.full.get()))
+        val num = (0 until updatableItemList.size-1).random()
+        theAnswer = updatableItemList[num]
+        questionText.set(getString(R.string.who_is_field, theAnswer.pvm?.full?.get()))
     }
 
     private fun showScoreSection(){
@@ -222,11 +226,11 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     private fun answerCorrect(){
         lifetimeCorrect.value = lifetimeCorrect.value?.plus(1)
 
-        if(correcTable.containsKey(theAnswer.id.get())) {
-            val someAnswer = correcTable[theAnswer.id.get()?:""]?.plus(1)?:-1
-            correcTable[theAnswer.id.get() ?: ""] = someAnswer
+        if(correcTable.containsKey(theAnswer.pvm?.id?.get())) {
+            val someAnswer = correcTable[theAnswer.pvm?.id?.get()?:""]?.plus(1)?:-1
+            correcTable[theAnswer.pvm?.id?.get() ?: ""] = someAnswer
         }else{
-            correcTable[theAnswer.id.get() ?: ""] = 1
+            correcTable[theAnswer.pvm?.id?.get() ?: ""] = 1
         }
 
         launch(UI) {
@@ -246,15 +250,16 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         prefs.edit().putInt(LIFETIME_CORRECT_KEY, lifetimeCorrect.value?:0).apply()
     }
 
-    private fun answerIncorrect(person: PersonViewModel){
+    private fun answerIncorrect(person: UpdatableItem){
         lifetimeIncorrect.value = lifetimeIncorrect.value?.plus(1)
         setCorrect(0)
-        if(peopleViewModelList.size < 2){
+        if(updatableItemList.size < 2){
             resetGame()
         }else{
-            showHideBottomButtons(peopleViewModelList.size - 1)
-            peopleViewModelList.remove(person)
-            loadPeopleAction.postValue(peopleViewModelList)
+            showHideBottomButtons(updatableItemList.size - 1)
+            //updatableItemList.remove(person)
+            updatableItemList.remove(updatableItemList.get(updatableItemList.indexOfFirst { it.id.equals(person.id) }))
+            loadPeopleAction.postValue(updatableItemList)
         }
         prefs.edit().putInt(LIFETIME_INCORRECT_KEY, lifetimeIncorrect.value?:0).apply()
     }
@@ -310,35 +315,44 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     fun normalMode() {
         selectedGameMode.set(CurrentGameMode.NORMAL)
-        peopleViewModelList.clear()
-        var i = 1
-        peopleViewModelList.addAll(profiles
+        updatableItemList.clear()
+        var i = 0
+        updatableItemList.addAll(profiles
                 .shuffled()
                 .asSequence()
                 .filter { !(it.headshot?.url?.contains("TEST1", true)?:false) }
                 .take(6)
-                .map { PersonViewModel("${i++}", it, this::onImageClick) }
+                .map { UpdatableItem(rainbow200[i], i++, PersonViewModel(it), this::onPersonClick)}
                 .toList())
         setQuestionText()
-        loadPeopleAction.postValue(peopleViewModelList)
+        loadPeopleAction.postValue(updatableItemList)
     }
 
     fun mattMode() {
         selectedGameMode.set(CurrentGameMode.MATT)
-        peopleViewModelList.clear()
-        var i = 1
-        peopleViewModelList.addAll(profiles
+        updatableItemList.clear()
+        var i = 0
+        updatableItemList.addAll(profiles
                 .shuffled()
                 .asSequence()
                 .filter {
                     it.firstName.equals(getString(R.string.matt), true) ||
                             it.firstName.equals(getString(R.string.matthew), true)
                 }
-                .map {PersonViewModel("${i++}", it, this::onImageClick)}
+                .map { UpdatableItem(rainbow200[i], i++, PersonViewModel(it), this::onPersonClick)}
                 .take(6)
                 .toList())
+
         setQuestionText()
-        loadPeopleAction.postValue(peopleViewModelList)
+        loadPeopleAction.postValue(updatableItemList)
+    }
+
+    fun onPersonClick(id: String){
+        val winner = updatableItemList.firstOrNull() {
+            it.pvm?.id?.get() == id
+        }
+        Timber.d("You just clicked ${winner?.pvm?.first?.get()}")
+        winner?.let { onImageClick(it) }
     }
 
     fun hintMode(){
@@ -376,12 +390,12 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             }
 
             override fun onFinish() {
-                if(peopleViewModelList.size > 2){
-                    val newList = peopleViewModelList.toMutableList()
+                if(updatableItemList.size > 2){
+                    val newList = updatableItemList.toMutableList()
                     newList.remove(theAnswer)
-                    val personToRemove = peopleViewModelList.get((0 until peopleViewModelList.size-1).random())
-                    peopleViewModelList.remove(personToRemove)
-                    loadPeopleAction.postValue(peopleViewModelList)
+                    val personToRemove = updatableItemList.get((0 until updatableItemList.size-1).random())
+                    updatableItemList.remove(personToRemove)
+                    loadPeopleAction.postValue(updatableItemList)
                     setTimer()
                 }
             }

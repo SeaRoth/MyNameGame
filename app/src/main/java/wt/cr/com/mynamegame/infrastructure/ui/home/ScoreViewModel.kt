@@ -23,7 +23,7 @@ class ScoreViewModel(private val score: MyModel.Score,
     init {
         val v1 = score.lifetimeCorrect
         val v2 = score.lifetimeIncorrect
-        val percentage = v1.div(v2)
+        val percentage = (v1.div(v2)*100).toDouble()
         lifetimePercentage.set("$percentage%")
     }
 

@@ -31,7 +31,6 @@ class HomeActivity : BaseActivity(){
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
 
     private lateinit var groupLayoutManager: GridLayoutManager
-    private lateinit var rainbow200: IntArray
     private var peopleSection  = Section()
     private var updatingGroup    = Section()
     private var updatableItems = ArrayList<UpdatableItem>()
@@ -49,13 +48,8 @@ class HomeActivity : BaseActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        rainbow200 = resources.getIntArray(R.array.rainbow_200)
-
-
-
         DataBindingUtil.setContentView<HomeActivityBinding>(this, R.layout.home_activity).apply {
             activityViewModel = homeActivityViewModel
-
         }
 
         personGroupAdapter.apply {
@@ -72,22 +66,13 @@ class HomeActivity : BaseActivity(){
 
         homeActivityViewModel.loadPeopleAction.observe(this, Observer {
             personGroupAdapter.clear()
-
-            val width = this.resources.displayMetrics.widthPixels
-            val height = this.resources.displayMetrics.heightPixels
-
-            val rv_height = rv_multi_item.layoutParams.height
-            val rv_width = rv_multi_item.layoutParams.width
-
-            Timber.d("${rv_height} and ${rv_width} ")
-
-
             peopleSection = Section()
             updatingGroup = Section()
             updatableItems.clear()
             var i = 1
             it?.forEach {pvm ->
-                updatableItems.add(UpdatableItem(rainbow200[i], i, pvm.url.get()?:""))
+                //updatableItems.add(UpdatableItem(rainbow200[i], i, pvm, this::theCb))
+                updatableItems.add(pvm)
                 i++
             }
             updatingGroup.update(updatableItems)
@@ -113,8 +98,6 @@ class HomeActivity : BaseActivity(){
             startActivity(StatsActivity.newIntent(this))
         }
         setupAdapter()
-
-
     }
 
     private fun setupAdapter(){

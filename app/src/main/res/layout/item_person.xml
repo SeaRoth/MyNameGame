@@ -16,7 +16,6 @@
         android:background="@color/zxing_transparent"
         android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground"
-        android:onClick="@{v -> viewModel.onClick()}"
         android:visibility="@{viewModel.visible}">
 
         <ImageView

@@ -22,12 +22,12 @@ enum class CurrentSortMode {
 class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     //Data
-    val loadStatAction         = MutableLiveData<MutableList<StatViewModel>>()
+    val loadStatAction                                 = MutableLiveData<MutableList<StatViewModel>>()
     private var highScores: MutableList<StatViewModel> = mutableListOf()
-    var players: MutableList<MyModel.Player> = mutableListOf()
+    var players: MutableList<MyModel.Player>           = mutableListOf()
     //Observables
     val showLoadingIndicator = ObservableBoolean(true)
-    val selectedSortMode    = ObservableField<CurrentSortMode>(CurrentSortMode.SCORE)
+    val selectedSortMode     = ObservableField<CurrentSortMode>(CurrentSortMode.SCORE)
 
     init {
         loadData()
