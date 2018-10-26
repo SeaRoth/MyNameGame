@@ -24,5 +24,4 @@ object MyModel {
             val highScore: Int,
             val twoCents: String
     )
-
 }

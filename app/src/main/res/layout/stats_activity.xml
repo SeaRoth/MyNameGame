@@ -4,24 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <import type="wt.cr.com.mynamegame.infrastructure.ui.home.CurrentGameMode"/>
+        <import type="wt.cr.com.mynamegame.infrastructure.ui.stats.CurrentFirebaseMode"/>
 
         <variable
             name="activityViewModel"
             type="wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivityViewModel" />
     </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_purple">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_multi_item"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="8dp"
             android:background="@android:color/holo_purple"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/radioButton" />
 
         <com.github.ybq.android.spinkit.SpinKitView
             android:id="@+id/spin_kit"
@@ -39,5 +43,52 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            android:checked="@{activityViewModel.selectedFirebaseMode == CurrentFirebaseMode.NORMAL}"
+            android:onClick="@{() ->activityViewModel.onNormalClick()}"
+            android:text="@string/normal"
+            android:textColor="@color/white_smoke"
+            android:theme="@style/radio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="1"
+            android:checked="@{activityViewModel.selectedFirebaseMode == CurrentFirebaseMode.HINT}"
+            android:onClick="@{() ->activityViewModel.onHintClick()}"
+            android:text="@string/hint"
+            android:textColor="@color/white_smoke"
+            android:theme="@style/radio"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/radioButton2" />
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:checked="@{activityViewModel.selectedFirebaseMode == CurrentFirebaseMode.MATT}"
+            android:onClick="@{() ->activityViewModel.onMattClick()}"
+            android:text="@string/matt"
+            android:textColor="@color/white_smoke"
+            android:theme="@style/radio"
+            app:layout_constraintEnd_toStartOf="@+id/radioButton3"
+            app:layout_constraintStart_toEndOf="@+id/radioButton"
+            app:layout_constraintTop_toTopOf="@+id/radioButton" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

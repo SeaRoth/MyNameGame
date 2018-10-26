@@ -8,6 +8,9 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.Toast
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
@@ -46,6 +49,7 @@ class StatsActivity : BaseActivity() {
             mainGroupAdapter.add(statsSection)
             it?.let{ vm -> statsSection.update(vm) }
         })
+
         setupAdapter()
     }
 

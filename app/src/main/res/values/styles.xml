@@ -82,6 +82,18 @@
         <item name="android:maxLines">1</item>
     </style>
 
+    <style name="StatsItemStyle">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">@color/white_smoke</item>
+        <item name="android:fontFamily">@font/open_sans_regular</item>
+    </style>
+
+    <style name="radio">
+        <item name="colorAccent">@color/green</item>
+        <item name="android:textColorSecondary">@color/purple</item>
+        <item name="colorControlNormal">@color/red</item>
+    </style>
+
 
     <!--ERRORS-->
     <style name="ErrorMessageStyle">

@@ -10,6 +10,7 @@
     <!--VIEWMODEL HELP-->
     <string name="correct_field">%s</string>
     <string name="high_score_field">%s</string>
+    <string name="mat">mat</string>
     <string name="correct_field_ext">Correct: %s</string>
     <string name="high_score_field_ext">High Score: %s</string>
     <string name="who_is_field">Who is: %s?</string>

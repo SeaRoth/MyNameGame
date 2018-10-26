@@ -10,14 +10,14 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
-import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
-import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
-import wt.cr.com.mynamegame.infrastructure.ui.home.CurrentGameMode
 
 enum class CurrentSortMode {
     NAME, LOCATION, TWOCENTS, SCORE
+}
+enum class CurrentFirebaseMode {
+    NORMAL, MATT, HINT
 }
 class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
@@ -27,6 +27,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     var players: MutableList<MyModel.Player>           = mutableListOf()
     //Observables
     val showLoadingIndicator = ObservableBoolean(true)
+    val selectedFirebaseMode = ObservableField<CurrentFirebaseMode>(CurrentFirebaseMode.NORMAL)
     val selectedSortMode     = ObservableField<CurrentSortMode>(CurrentSortMode.SCORE)
 
     init {
@@ -43,11 +44,18 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
         loadStatAction.postValue(highScores)
     }
 
-
     private fun loadData(){
+        makeRequest("normal")
+    }
+
+    /**
+     * normal, hint, matt
+     */
+    fun makeRequest(collectionPath: String){
+        players.clear()
         launch(UI) {
             WTServiceLocator.resolve(FirebaseFirestore::class.java)
-                    .collection("users")
+                    .collection(collectionPath)
                     .orderBy("highScore", Query.Direction.ASCENDING)
                     .limit(10)
                     .addSnapshotListener { documentSnapshot, error ->
@@ -68,6 +76,21 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun statClicked(statViewModel: StatViewModel){
 
+    }
+
+    fun onNormalClick(){
+        selectedFirebaseMode.set(CurrentFirebaseMode.NORMAL)
+        makeRequest("normal")
+    }
+
+    fun onMattClick(){
+        selectedFirebaseMode.set(CurrentFirebaseMode.MATT)
+        makeRequest("matt")
+    }
+
+    fun onHintClick(){
+        selectedFirebaseMode.set(CurrentFirebaseMode.HINT)
+        makeRequest("hint")
     }
 
     /**

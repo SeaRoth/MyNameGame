@@ -120,7 +120,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     fun onBottomBarClick(index: Int){
         val mViewModel = updatableItemList[index]
-        //val mViewModel = updatableItemList.first{ it.id.get() == userId }
         mViewModel.let { onImageClick(it) }
     }
 
@@ -251,14 +250,18 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun answerIncorrect(person: UpdatableItem){
+        if(selectedGameMode.get() == CurrentGameMode.HINT){
+            setTimer()
+        }
+
         lifetimeIncorrect.value = lifetimeIncorrect.value?.plus(1)
         setCorrect(0)
         if(updatableItemList.size < 2){
             resetGame()
         }else{
-            showHideBottomButtons(updatableItemList.size - 1)
-            //updatableItemList.remove(person)
-            updatableItemList.remove(updatableItemList.get(updatableItemList.indexOfFirst { it.id.equals(person.id) }))
+            val i = updatableItemList.indexOfFirst { it.id.equals(person.id) }
+            showHideBottomButtons(i)
+            updatableItemList.remove(updatableItemList[i])
             loadPeopleAction.postValue(updatableItemList)
         }
         prefs.edit().putInt(LIFETIME_INCORRECT_KEY, lifetimeIncorrect.value?:0).apply()
@@ -316,13 +319,13 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     fun normalMode() {
         selectedGameMode.set(CurrentGameMode.NORMAL)
         updatableItemList.clear()
-        var i = 0
         updatableItemList.addAll(profiles
                 .shuffled()
                 .asSequence()
                 .filter { !(it.headshot?.url?.contains("TEST1", true)?:false) }
                 .take(6)
-                .map { UpdatableItem(rainbow200[i], i++, PersonViewModel(it), this::onPersonClick)}
+                .mapIndexed{i, it ->
+                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick) }
                 .toList())
         setQuestionText()
         loadPeopleAction.postValue(updatableItemList)
@@ -331,18 +334,18 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     fun mattMode() {
         selectedGameMode.set(CurrentGameMode.MATT)
         updatableItemList.clear()
-        var i = 0
         updatableItemList.addAll(profiles
                 .shuffled()
                 .asSequence()
                 .filter {
                     it.firstName.equals(getString(R.string.matt), true) ||
-                            it.firstName.equals(getString(R.string.matthew), true)
+                            it.firstName.equals(getString(R.string.matthew), true) ||
+                            it.firstName.equals(getString(R.string.mat), true)
                 }
-                .map { UpdatableItem(rainbow200[i], i++, PersonViewModel(it), this::onPersonClick)}
+                .mapIndexed{i, it ->
+                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick)}
                 .take(6)
                 .toList())
-
         setQuestionText()
         loadPeopleAction.postValue(updatableItemList)
     }
@@ -388,18 +391,20 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         val countDownTimer = object : CountDownTimer(time, 1000) {
 
             override fun onTick(secondsUntilDone: Long) {
-                secondsLeftField.set("${secondsUntilDone/1000}")
+                if(isGameStarted.get()) secondsLeftField.set("${secondsUntilDone/1000}")
+                else this.cancel()
             }
 
             override fun onFinish() {
-                if(updatableItemList.size > 2){
+                if(updatableItemList.size > 2 && isGameStarted.get()){
                     val newList = updatableItemList.toMutableList()
                     newList.remove(theAnswer)
                     val personToRemove = updatableItemList.get((0 until updatableItemList.size-1).random())
                     updatableItemList.remove(personToRemove)
                     loadPeopleAction.postValue(updatableItemList)
                     setTimer()
-                }
+                }else
+                    this.cancel()
             }
         }.start()}
 }
