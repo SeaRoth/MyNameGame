@@ -102,6 +102,8 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.1.8'
     implementation "io.reactivex.rxjava2:rxandroid:2.0.2"
 
+    implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha12'
+
     // Groupie
     implementation "com.xwray:groupie:$groupie_version"
     implementation "com.xwray:groupie-databinding:$groupie_version"

@@ -10,7 +10,10 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
+import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
+import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 
 enum class CurrentSortMode {
@@ -21,6 +24,8 @@ enum class CurrentFirebaseMode {
 }
 class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
+    //Action
+    val invalidateOptionsMenuAction = LiveDataAction()
     //Data
     val loadStatAction                                 = MutableLiveData<MutableList<StatViewModel>>()
     private var highScores: MutableList<StatViewModel> = mutableListOf()
@@ -45,27 +50,31 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun loadData(){
-        makeRequest("normal")
+        makeRequest(getString(R.string.normal).toLowerCase())
     }
 
     /**
      * normal, hint, matt
      */
     fun makeRequest(collectionPath: String){
-        players.clear()
         launch(UI) {
             WTServiceLocator.resolve(FirebaseFirestore::class.java)
                     .collection(collectionPath)
-                    .orderBy("highScore", Query.Direction.ASCENDING)
+                    .orderBy(getString(R.string.high_score_camel), Query.Direction.ASCENDING)
                     .limit(10)
                     .addSnapshotListener { documentSnapshot, error ->
+                        players.clear()
                         showLoadingIndicator.set(false)
                         if (error != null) {
                             Timber.d("")
                         } else if (documentSnapshot != null) {
                             highScores.clear()
                             for ((index, i) in documentSnapshot.documents.withIndex()) {
-                                val player = MyModel.Player(i.get("name").toString(), i.get("location").toString(), Integer.parseInt(i.get("highScore").toString()), i.get("twoCents").toString())
+                                val player = MyModel.Player(
+                                        i.get(getString(R.string.name).toLowerCase()).toString(),
+                                        i.get(getString(R.string.location).toLowerCase()).toString(),
+                                        Integer.parseInt(i.get(getString(R.string.high_score_camel)).toString()),
+                                        i.get(getString(R.string.two_cents_camel)).toString())
                                 players.add(player)
                             }
                             sortByScore()
@@ -80,17 +89,17 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     fun onNormalClick(){
         selectedFirebaseMode.set(CurrentFirebaseMode.NORMAL)
-        makeRequest("normal")
+        makeRequest(getString(R.string.normal).toLowerCase())
     }
 
     fun onMattClick(){
         selectedFirebaseMode.set(CurrentFirebaseMode.MATT)
-        makeRequest("matt")
+        makeRequest(getString(R.string.matt).toLowerCase())
     }
 
     fun onHintClick(){
         selectedFirebaseMode.set(CurrentFirebaseMode.HINT)
-        makeRequest("hint")
+        makeRequest(getString(R.string.hint).toLowerCase())
     }
 
     /**

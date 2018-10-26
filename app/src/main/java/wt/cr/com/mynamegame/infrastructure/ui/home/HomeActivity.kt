@@ -8,14 +8,20 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
+import android.widget.EditText
+import android.widget.TextView
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.callbacks.onShow
+import com.afollestad.materialdialogs.customview.customView
 import com.xwray.groupie.GroupAdapter
 import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
-import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
+import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
 import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
@@ -23,6 +29,8 @@ import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
 class HomeActivity : BaseActivity(){
 
     companion object {
+        var widthPixels: Int = 0
+        var heightPixels: Int = 0
         fun newIntent(context: Context): Intent {
             return Intent(context, HomeActivity::class.java)
         }
@@ -53,12 +61,12 @@ class HomeActivity : BaseActivity(){
         }
 
         personGroupAdapter.apply {
-            val wPixels = resources.displayMetrics.widthPixels
-            val hPixels = resources.displayMetrics.heightPixels
-            if(hPixels > wPixels)
-                spanCount = 6
+            widthPixels = resources.displayMetrics.widthPixels
+            heightPixels = resources.displayMetrics.heightPixels
+            spanCount = if(heightPixels > widthPixels)
+                6
             else
-                spanCount = 12
+                12
         }
 
         groupLayoutManager = GridLayoutManager(this, personGroupAdapter.spanCount).apply {
@@ -101,9 +109,8 @@ class HomeActivity : BaseActivity(){
         }
 
         homeActivityViewModel.loadStatAction.observe(this){
-            startActivity(StatsActivity.newIntent(this))
+            startActivity(StatsActivity.newIntent(this, homeActivityViewModel.highScore.value?:0))
         }
-
     }
 
     private fun setupAdapter(){

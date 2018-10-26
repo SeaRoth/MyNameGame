@@ -12,12 +12,14 @@ import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
 
 import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import timber.log.Timber
 
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.infrastructure.common.utils.dpToPx
@@ -113,8 +115,29 @@ abstract class BaseActivity : AppCompatActivity() {
             FLAG_ACTIVITY_REORDER_TO_FRONT
     )
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        inflateOptionsMenu(menu)
         return true
+    }
+
+    open fun inflateOptionsMenu(menu: Menu){
+        return menuInflater.inflate(R.menu.menu_full, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.action_add -> {
+                Timber.d("Add"); return true
+            }
+            R.id.action_remove -> {
+                Timber.d("Add"); return true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                finish(); return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     fun saveUpdateView(view: TextView, label: String){

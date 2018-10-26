@@ -11,6 +11,8 @@
     <string name="correct_field">%s</string>
     <string name="high_score_field">%s</string>
     <string name="mat">mat</string>
+    <string name="high_score_camel">highScore</string>
+    <string name="two_cents_camel">twoCents</string>
     <string name="correct_field_ext">Correct: %s</string>
     <string name="high_score_field_ext">High Score: %s</string>
     <string name="who_is_field">Who is: %s?</string>
@@ -37,7 +39,6 @@
     <string name="score">Score</string>
     <string name="score_caret">Score^</string>
 
-
     <!--HOW TO PAGE-->
     <string name="welcome_name_game">Welcome to the Name Game</string>
     <string name="one_game_mode">1. Select a Game Mode</string>
@@ -53,6 +54,13 @@
     <string name="lifetime_incorrect">Lifetime Incorrect</string>
     <string name="percent_correct">% Correct</string>
     <string name="world_stats">Worldwide Stats</string>
+
+    <!--MENU-->
+    <string name="add">Add</string>
+    <string name="remove">Remove</string>
+    <string name="menu_add_desc">Enter below information to add to worldwide stats</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <!--ERRORS-->
     <string name="connectivity_error">Cannot connect to the internet</string>

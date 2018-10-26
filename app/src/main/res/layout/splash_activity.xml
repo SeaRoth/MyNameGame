@@ -8,50 +8,48 @@
             type="wt.cr.com.mynamegame.infrastructure.ui.splash.SplashActivityViewModel" />
     </data>
 
-<android.support.constraint.ConstraintLayout
-    android:id="@+id/cl_splash"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/primary_dark"
-    tools:context=".infrastructure.ui.splash.SplashActivity">
-
-    <ImageView
-        android:id="@+id/imageView9"
-        android:layout_width="239dp"
-        android:layout_height="90dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:visibility="@{viewModel.showTopLogo}"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@drawable/logo_black" />
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/cv_splash"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:elevation="2dp"
-        android:layout_marginBottom="32dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:cardCornerRadius="@{viewModel.cornerRadius}">
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_splash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/primary"
+        tools:context=".infrastructure.ui.splash.SplashActivity">
 
         <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="116dp"
-            android:layout_height="116dp"
-            app:srcCompat="@drawable/logo_blue" />
-    </android.support.v7.widget.CardView>
+            android:id="@+id/iv_top_logo"
+            android:layout_width="239dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="@{viewModel.showTopLogo}"
+            app:layout_constraintBottom_toTopOf="@+id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.503"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/logo_black" />
 
-    <android.support.constraint.Guideline
-        android:id="@+id/guideline2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.33" />
-</android.support.constraint.ConstraintLayout>
+        <android.support.v7.widget.CardView
+            android:id="@+id/cv_splash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="2dp"
+            app:cardCornerRadius="@{viewModel.cornerRadius}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="116dp"
+                android:layout_height="116dp"
+                app:srcCompat="@drawable/logo_blue" />
+        </android.support.v7.widget.CardView>
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.33" />
+    </android.support.constraint.ConstraintLayout>
 </layout>

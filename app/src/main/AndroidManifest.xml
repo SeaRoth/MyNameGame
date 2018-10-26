@@ -18,7 +18,7 @@
 
         <activity android:name=".infrastructure.ui.stats.StatsActivity"
             android:screenOrientation="sensorPortrait"
-            android:parentActivityName=".infrastructure.ui.home.HomeActivity"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/StatsActivityTheme">
         </activity>
 
@@ -34,8 +34,5 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
     </application>
-
-
 </manifest>

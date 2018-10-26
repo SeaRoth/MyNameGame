@@ -23,13 +23,14 @@ import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import java.util.concurrent.ThreadLocalRandom
-import java.util.function.Predicate
 
 enum class CurrentGameMode {
     NORMAL, MATT, HINT, CUSTOM, ERROR
 }
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
-const val HIGH_SCORE_KEY = "highscore"
+const val HIGH_SCORE_NORMAL_KEY = "highscorenormal"
+const val HIGH_SCORE_MATT_KEY = "highscorematt"
+const val HIGH_SCORE_HINT_KEY = "highscorehint"
 const val LIFETIME_CORRECT_KEY = "lifetime.correct"
 const val LIFETIME_INCORRECT_KEY = "lifetime.incorrect"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
@@ -65,17 +66,17 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val showButton3          = ObservableBoolean(true)
     val showButton4          = ObservableBoolean(true)
     val showButton5          = ObservableBoolean(true)
-    val questionText       = ObservableField<String>()
-    val numberCorrectField = ObservableField<String>(getString(R.string.correct_field_ext, getString(R.string.zero)))
-    val highScoreField     = ObservableField<String>(getString(R.string.high_score_field_ext, getString(R.string.zero)))
-    val secondsLeftField   = ObservableField<String>()
+    val questionText         = ObservableField<String>()
+    val numberCorrectField   = ObservableField<String>(getString(R.string.correct_field_ext, getString(R.string.zero)))
+    val highScoreField       = ObservableField<String>(getString(R.string.high_score_field_ext, getString(R.string.zero)))
+    val secondsLeftField     = ObservableField<String>()
     //Repo
     val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
 
     init {
         rainbow200 = app.resources.getIntArray(R.array.rainbow_200)
         setCorrect(0)
-        val high = prefs.getInt(HIGH_SCORE_KEY,0)
+        val high = prefs.getInt(HIGH_SCORE_NORMAL_KEY,0)
         highScore.postValue(high)
         setHigh(high)
         lifetimeCorrect.value = prefs.getInt(LIFETIME_CORRECT_KEY,0)
@@ -162,7 +163,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun onResetTopClick(scoreViewModel: ScoreViewModel){
         launch(UI){
-            prefs.edit().putInt(HIGH_SCORE_KEY,0).apply()
+            prefs.edit().putInt(HIGH_SCORE_NORMAL_KEY,0).apply()
             setHigh(0)
         }
     }
@@ -237,7 +238,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             if(newScore?.compareTo(currentStreak.value?:0)?:0 > 0){
                 currentStreak.value = newScore
                 if(newScore?.compareTo(highScore.value?:0)?:0 > 0){ //
-                    prefs.edit().putInt(HIGH_SCORE_KEY, newScore?:0).apply()
+                    prefs.edit().putInt(HIGH_SCORE_NORMAL_KEY, newScore?:0).apply()
                     setHigh(newScore?:-1)
                 }
             }
@@ -325,10 +326,27 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 .filter { !(it.headshot?.url?.contains("TEST1", true)?:false) }
                 .take(6)
                 .mapIndexed{i, it ->
-                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick) }
+                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading) }
                 .toList())
         setQuestionText()
         loadPeopleAction.postValue(updatableItemList)
+    }
+
+    private fun imageErrorLoading(id: String){
+        normalErrorAction.actionOccurred("ERROR LOADING IMG: $id")
+        val v = updatableItemList.firstOrNull { it.pvm?.id?.get() == (id) }
+        val indexForBottomButton = updatableItemList.indexOf(v)
+        showHideBottomButtons(indexForBottomButton)
+        v.let {
+            val i = profiles.indexOfFirst { it.id == id }
+            i.let {
+                profiles.removeAt(i)
+            }
+            updatableItemList.remove(v)
+            if(v == theAnswer) //MAKE SURE PERSON REMOVING WASNT THE ANSWER
+                setQuestionText()
+            loadPeopleAction.postValue(updatableItemList)
+        }
     }
 
     fun mattMode() {
@@ -343,20 +361,23 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                             it.firstName.equals(getString(R.string.mat), true)
                 }
                 .mapIndexed{i, it ->
-                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick)}
+                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading)}
                 .take(6)
                 .toList())
         setQuestionText()
         loadPeopleAction.postValue(updatableItemList)
     }
 
-    fun onPersonClick(id: String){
+    private fun onPersonClick(id: String){
+        val winner = updatableItemList.firstOrNull() {
+            it.pvm?.id?.get() == id
+        }
         if(isGameStarted.get()) {
-            val winner = updatableItemList.firstOrNull() {
-                it.pvm?.id?.get() == id
-            }
-            Timber.d("You just clicked ${winner?.pvm?.first?.get()}")
             winner?.let { onImageClick(it) }
+        }else {
+            //TODO: Show name for five seconds
+
+
         }
     }
 
@@ -377,7 +398,6 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     /**
      * GAME MODES
      */
-
     override fun onCleared() {
 
     }
@@ -386,7 +406,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             ThreadLocalRandom.current().nextInt((endInclusive + 1) - start) +  start
 
 
-    fun HintTimer(num: Int, time: Long) {
+    private fun HintTimer(num: Int, time: Long) {
 
         val countDownTimer = object : CountDownTimer(time, 1000) {
 

@@ -1,6 +1,7 @@
 package wt.cr.com.mynamegame.infrastructure.ui.home.cards
 
 import android.support.annotation.ColorInt
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 import com.xwray.groupie.kotlinandroidextensions.Item
@@ -10,13 +11,16 @@ import kotlinx.android.synthetic.main.item_card.*
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.ui.home.PersonViewModel
+import java.lang.Exception
+
 
 val INSET_TYPE_KEY = "inset_type"
 val INSET = "inset"
 open class CardItem (@ColorInt private val colorRes: Int,
                      val text: CharSequence? = "",
                      val pvm: PersonViewModel?,
-                     val callback: (String) -> Unit?) : Item() {
+                     val callback: (String) -> Unit?,
+                     val callbackErrorImage: (String) -> Unit?) : Item() {
     init {
         extras[INSET_TYPE_KEY] = INSET
     }
@@ -50,6 +54,16 @@ open class CardItem (@ColorInt private val colorRes: Int,
                 .error(R.drawable.baseline_error_black_48)
                 .placeholder(R.drawable.progress_animation)
                 .resize(w,h)
-                .into(viewHolder.iv_person)
+                .into(viewHolder.iv_person, object : com.squareup.picasso.Callback {
+                    override fun onError(e: Exception?) {
+                        callbackErrorImage(pvm?.id?.get()?:"")
+
+                    }
+                    override fun onSuccess() {
+                        //Success image already loaded into the view
+                    }
+                })
+
+
     }
 }
