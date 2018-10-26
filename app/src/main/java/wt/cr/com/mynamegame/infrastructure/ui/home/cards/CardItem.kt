@@ -28,8 +28,18 @@ open class CardItem (@ColorInt private val colorRes: Int,
         viewHolder.root.setOnClickListener {
             callback(this.pvm?.id?.get()?:"")
         }
-        val w = Math.ceil(viewHolder.root.context.resources.displayMetrics.widthPixels / 2.2).toInt()
-        val h = Math.ceil(viewHolder.root.context.resources.displayMetrics.heightPixels / 4.4).toInt()
+        var w:Int
+        var h:Int
+        val wPixels = viewHolder.root.context.resources.displayMetrics.widthPixels
+        val hPixels = viewHolder.root.context.resources.displayMetrics.heightPixels
+
+        if(hPixels > wPixels){
+            w = Math.ceil(wPixels / 2.2).toInt()
+            h = Math.ceil(hPixels / 4.4).toInt()
+        }else{
+            w = Math.ceil(wPixels / 4.4).toInt()
+            h = Math.ceil(hPixels / 2.2).toInt()
+        }
         viewHolder.layout_one_item.minWidth = w + 10
         viewHolder.layout_one_item.minHeight = h + 10
         viewHolder.text.text = text

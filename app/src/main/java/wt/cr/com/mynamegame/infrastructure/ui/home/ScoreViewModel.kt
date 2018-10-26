@@ -5,6 +5,7 @@ import android.databinding.ViewDataBinding
 import com.xwray.groupie.databinding.BindableItem
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
+import kotlin.math.roundToInt
 
 class ScoreViewModel(private val score: MyModel.Score,
                      val callbackShare: () -> Unit,
@@ -21,9 +22,9 @@ class ScoreViewModel(private val score: MyModel.Score,
     val lifetimePercentage = ObservableField<String>()
 
     init {
-        val v1 = score.lifetimeCorrect
-        val v2 = score.lifetimeIncorrect
-        val percentage = (v1.div(v2)*100).toDouble()
+        val v1 = score.lifetimeCorrect.toDouble()
+        val v2 = score.lifetimeIncorrect.toDouble() + v1
+        val percentage = (v1.div(v2)*100).roundToInt()
         lifetimePercentage.set("$percentage%")
     }
 

@@ -3,14 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.constraint.ConstraintLayout
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="2dp"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_one_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:background="@color/green_200"
-        android:elevation="2dp"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:background="@color/zxing_transparent">
 
         <ImageView
             android:id="@+id/iv_person"
@@ -55,6 +60,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="4" />
     </android.support.constraint.ConstraintLayout>
-
+    </FrameLayout>
 
 </layout>

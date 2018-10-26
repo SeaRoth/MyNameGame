@@ -348,11 +348,13 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onPersonClick(id: String){
-        val winner = updatableItemList.firstOrNull() {
-            it.pvm?.id?.get() == id
+        if(isGameStarted.get()) {
+            val winner = updatableItemList.firstOrNull() {
+                it.pvm?.id?.get() == id
+            }
+            Timber.d("You just clicked ${winner?.pvm?.first?.get()}")
+            winner?.let { onImageClick(it) }
         }
-        Timber.d("You just clicked ${winner?.pvm?.first?.get()}")
-        winner?.let { onImageClick(it) }
     }
 
     fun hintMode(){

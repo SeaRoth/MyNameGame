@@ -53,12 +53,18 @@ class HomeActivity : BaseActivity(){
         }
 
         personGroupAdapter.apply {
-            spanCount = 6
+            val wPixels = resources.displayMetrics.widthPixels
+            val hPixels = resources.displayMetrics.heightPixels
+            if(hPixels > wPixels)
+                spanCount = 6
+            else
+                spanCount = 12
         }
 
         groupLayoutManager = GridLayoutManager(this, personGroupAdapter.spanCount).apply {
             spanSizeLookup = personGroupAdapter.spanSizeLookup
         }
+        setupAdapter()
 
         homeActivityViewModel.normalErrorAction.observe(this){it ->
             saveUpdateView(save_update_view_act_list_detail, it)
@@ -97,13 +103,14 @@ class HomeActivity : BaseActivity(){
         homeActivityViewModel.loadStatAction.observe(this){
             startActivity(StatsActivity.newIntent(this))
         }
-        setupAdapter()
+
     }
 
     private fun setupAdapter(){
-        rv_multi_item.layoutManager = groupLayoutManager
-        rv_multi_item.itemAnimator = DefaultItemAnimator()
-        rv_multi_item.adapter = personGroupAdapter
-        //personGroupAdapter.add(peopleSection)
+        rv_multi_item.apply {
+            layoutManager = groupLayoutManager
+            itemAnimator = DefaultItemAnimator()
+            adapter = personGroupAdapter
+        }
     }
 }

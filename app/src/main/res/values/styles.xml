@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="SplashActivityTheme" parent="HomeActivityTheme">
+        <item name="android:windowDisablePreview">true</item>
+    </style>
+
     <style name="HomeActivityTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
