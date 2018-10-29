@@ -12,7 +12,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
-import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
@@ -22,6 +21,7 @@ import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
 import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 enum class CurrentGameMode {
@@ -45,6 +45,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val normalErrorAction      = LiveDataActionWithData<String>()
     //Live data
     val loadPeopleAction       = MutableLiveData<List<UpdatableItem>>()
+    val shuffleProfilesAction  = MutableLiveData<List<UpdatableItem>>()
     val loadScoreAction        = MutableLiveData<ScoreViewModel>()
 
     val numberCorrect          = MutableLiveData<Int>()
@@ -58,6 +59,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     private var profiles: MutableList<MyModel.Person> = mutableListOf()
     //Observables
     val selectedGameMode     = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
+    val shuffleProfiles      = ObservableBoolean(true)
     val showLoadingIndicator = ObservableBoolean(true)
     val isGameStarted        = ObservableBoolean(false)
     val showButton0          = ObservableBoolean(true)
@@ -95,6 +97,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                                 showLoadingIndicator.set(false)
                                 profiles = result.data
                                 normalMode()
+                                setShuffleTimer()
                             },
                             { error ->
                                 errorMode(error.localizedMessage)
@@ -106,6 +109,10 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     /**
      * UI
      */
+
+    fun showScores(){
+        loadStatAction.actionOccurred()
+    }
     private fun onImageClick(person: UpdatableItem){
         hasUserGuessed.postValue(true)
         if(isGameStarted.get()) {
@@ -141,16 +148,20 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 loadPeopleAction.postValue(updatableItemList)
 
                 if (selectedGameMode.get() == CurrentGameMode.HINT) {
-                    setTimer()
+                    setHintTimer()
                 }
             }
         }
     }
 
-    private fun setTimer(){
+    private fun setHintTimer(){
         if(isGameStarted.get()){
             HintTimer(0, 8000)
         }
+    }
+
+    private fun setShuffleTimer(){
+        ShuffleTimer(0,5000)
     }
 
     private fun onResetClick(scoreViewModel: ScoreViewModel){
@@ -252,7 +263,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun answerIncorrect(person: UpdatableItem){
         if(selectedGameMode.get() == CurrentGameMode.HINT){
-            setTimer()
+            setHintTimer()
         }
 
         lifetimeIncorrect.value = lifetimeIncorrect.value?.plus(1)
@@ -326,15 +337,15 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                 .filter { !(it.headshot?.url?.contains("TEST1", true)?:false) }
                 .take(6)
                 .mapIndexed{i, it ->
-                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading) }
+                    UpdatableItem(rainbow200[Random().nextInt(rainbow200.size)], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading) }
                 .toList())
         setQuestionText()
         loadPeopleAction.postValue(updatableItemList)
     }
 
     private fun imageErrorLoading(id: String){
-        normalErrorAction.actionOccurred("ERROR LOADING IMG: $id")
         val v = updatableItemList.firstOrNull { it.pvm?.id?.get() == (id) }
+        normalErrorAction.actionOccurred("ERROR LOADING ${v?.pvm?.first?.get()} or ${v?.pvm?.first?.get()}")
         val indexForBottomButton = updatableItemList.indexOf(v)
         showHideBottomButtons(indexForBottomButton)
         v.let {
@@ -361,7 +372,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                             it.firstName.equals(getString(R.string.mat), true)
                 }
                 .mapIndexed{i, it ->
-                    UpdatableItem(rainbow200[i], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading)}
+                    UpdatableItem(rainbow200[Random().nextInt(rainbow200.size)], i+1, PersonViewModel(it), this::onPersonClick, this::imageErrorLoading)}
                 .take(6)
                 .toList())
         setQuestionText()
@@ -422,9 +433,27 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                     val personToRemove = updatableItemList.get((0 until updatableItemList.size-1).random())
                     updatableItemList.remove(personToRemove)
                     loadPeopleAction.postValue(updatableItemList)
-                    setTimer()
+                    setHintTimer()
                 }else
                     this.cancel()
+            }
+        }.start()}
+
+    fun shuffleVisibleProfiles() {
+        ArrayList(updatableItemList).apply {
+            shuffle()
+            shuffleProfilesAction.postValue(this)
+        }
+        ShuffleTimer(0, (9000..20000).random().toLong())
+    }
+
+    private fun ShuffleTimer(num: Int, time: Long) {
+
+        val countDownTimer = object : CountDownTimer(time, 1000) {
+            override fun onTick(secondsUntilDone: Long) {}
+            override fun onFinish() {
+                if(shuffleProfiles.get())
+                    shuffleVisibleProfiles()
             }
         }.start()}
 }

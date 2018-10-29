@@ -7,8 +7,8 @@ import com.xwray.groupie.databinding.BindableItem
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
-class StatViewModel(val isE: Boolean,
-        private val player: MyModel.Player,
+class StatViewModel(isE: Boolean,
+                    player: MyModel.Player,
                     val personClickListener:
                     (StatViewModel) -> Unit): BaseBindableViewModel(){
 
@@ -16,7 +16,6 @@ class StatViewModel(val isE: Boolean,
     val location    = ObservableField<String>("${player.location}")
     val score       = ObservableField<String>("${player.highScore}")
     val twoCents    = ObservableField<String>(player.twoCents)
-
     val isEven = ObservableBoolean(isE)
 
     override fun getItemFactory(): (BaseBindableViewModel) -> BindableItem<ViewDataBinding> {

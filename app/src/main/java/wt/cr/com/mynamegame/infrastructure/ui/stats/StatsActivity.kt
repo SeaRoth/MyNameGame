@@ -74,7 +74,6 @@ class StatsActivity : BaseActivity() {
             mainGroupAdapter.add(statsSection)
             it?.let{ vm -> statsSection.update(vm) }
         })
-
         setupAdapter()
     }
 
@@ -106,7 +105,6 @@ class StatsActivity : BaseActivity() {
         }
         .show()
     }
-
 
     private fun addNewStatDialog(){
         MaterialDialog(this)

@@ -12,7 +12,6 @@ import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
-import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 
@@ -24,8 +23,6 @@ enum class CurrentFirebaseMode {
 }
 class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
 
-    //Action
-    val invalidateOptionsMenuAction = LiveDataAction()
     //Data
     val loadStatAction                                 = MutableLiveData<MutableList<StatViewModel>>()
     private var highScores: MutableList<StatViewModel> = mutableListOf()
@@ -56,7 +53,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     /**
      * normal, hint, matt
      */
-    fun makeRequest(collectionPath: String){
+    private fun makeRequest(collectionPath: String){
         launch(UI) {
             WTServiceLocator.resolve(FirebaseFirestore::class.java)
                     .collection(collectionPath)
@@ -140,5 +137,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
         players.addAll(temp.sortedByDescending{ it.highScore })
         setHighScoresAndLoadStats()
     }
+
+
 
 }

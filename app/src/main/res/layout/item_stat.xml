@@ -15,11 +15,11 @@
         android:layout_gravity="bottom"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="6dp"
-        android:background="@color/blue_violet"
+        android:background="@{viewModel.isEven ? @color/slate_blue : @color/royal_blue}"
         android:elevation="2dp"
         android:foreground="?android:attr/selectableItemBackground"
+        tools:background="@color/royal_blue"
         android:onClick="@{v -> viewModel.onClick()}">
-
 
         <TextView
             android:id="@+id/textView22"

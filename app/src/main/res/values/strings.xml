@@ -20,6 +20,16 @@
     <string name="matthew">matthew</string>
     <string name="retry">Retry</string>
 
+    <!--NAV-->
+    <string name="nav_normal">N</string>
+    <string name="nav_matt">M</string>
+    <string name="nav_hint">H</string>
+    <string name="nav_custom">C</string>
+    <string name="nav_stats">S</string>
+
+    <!--PEOPLE-->
+    <string name="img_person">img_person</string>
+
     <!--ITEM SCORE-->
     <string name="reset_score">RESET SCORE</string>
     <string name="reset_top_score">RESET TOP SCORE</string>
@@ -44,7 +54,6 @@
     <string name="one_game_mode">1. Select a Game Mode</string>
     <string name="two_press_play">2. Press Play</string>
     <string name="three_make_guess">3. Make a Guess</string>
-
     <string name="view_personal_stats">View Personal Stats</string>
     <string name="upload_stats">Upload Stats</string>
     <string name="view_world_stats">View Worldwide Stats</string>

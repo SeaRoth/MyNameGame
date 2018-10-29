@@ -96,7 +96,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_game_modes">
 
-                <Button
+                <ImageView
                     android:id="@+id/textView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -107,13 +107,15 @@
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.NORMAL ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.normalMode()}"
                     android:singleLine="true"
-                    android:text="@string/normal"
+                    android:text="@string/nav_normal"
                     android:textColor="@color/white"
+                    android:src="@drawable/ic_normal"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    tools:background="@drawable/style_radius_button"
                     android:typeface="sans" />
 
-                <Button
+                <ImageView
                     android:id="@+id/textView3"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -124,13 +126,15 @@
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.MATT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.mattMode()}"
                     android:singleLine="true"
-                    android:text="@string/matt"
+                    android:src="@drawable/ic_matt"
+                    android:text="@string/nav_matt"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"
-                    android:typeface="sans" />
+                    android:typeface="sans"
+                    tools:background="@drawable/style_radius_button" />
 
-                <Button
+                <ImageView
                     android:id="@+id/textView4"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -141,13 +145,15 @@
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.HINT ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.hintMode()}"
                     android:singleLine="true"
-                    android:text="@string/hint"
+                    android:text="@string/nav_hint"
                     android:textColor="@color/white"
+                    android:src="@drawable/ic_hint"
                     android:textSize="12sp"
                     android:textStyle="bold"
+                    tools:background="@drawable/style_radius_button"
                     android:typeface="sans" />
 
-                <Button
+                <ImageView
                     android:id="@+id/textView5"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -159,7 +165,27 @@
                     android:background="@{activityViewModel.selectedGameMode == CurrentGameMode.CUSTOM ? @drawable/style_radius_button_sel : @drawable/style_radius_button}"
                     android:onClick="@{v -> activityViewModel.fourMode()}"
                     android:singleLine="true"
-                    android:text="@string/four"
+                    android:src="@drawable/ic_custom"
+                    android:text="@string/nav_custom"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:background="@drawable/style_radius_button"
+                    android:typeface="sans" />
+
+                <ImageView
+                    android:id="@+id/textView79"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/style_radius_button"
+                    android:onClick="@{v -> activityViewModel.showScores()}"
+                    android:singleLine="true"
+                    android:src="@drawable/ic_stats"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     android:textStyle="bold"
@@ -311,6 +337,8 @@
             android:backgroundTint="@{activityViewModel.isGameStarted ? @color/crimson : @color/forest_green}"
             android:src="@{activityViewModel.isGameStarted ? @android:drawable/ic_menu_close_clear_cancel : @android:drawable/ic_media_play}"
             android:onClick="@{v -> activityViewModel.onStartClicked()}"
+            tools:src="@android:drawable/ic_media_play"
+            tools:backgroundTint="@color/forest_green"
             app:layout_constraintBottom_toBottomOf="@+id/rv_multi_item"
             app:layout_constraintEnd_toEndOf="parent" />
 

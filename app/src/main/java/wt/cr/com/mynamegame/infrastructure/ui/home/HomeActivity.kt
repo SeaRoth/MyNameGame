@@ -8,11 +8,6 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
-import android.widget.EditText
-import android.widget.TextView
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onShow
-import com.afollestad.materialdialogs.customview.customView
 import com.xwray.groupie.GroupAdapter
 import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 import com.xwray.groupie.Section
@@ -20,8 +15,6 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
-import wt.cr.com.mynamegame.domain.model.MyModel
-import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
 import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
@@ -85,13 +78,18 @@ class HomeActivity : BaseActivity(){
             updatableItems.clear()
             var i = 1
             it?.forEach {pvm ->
-                //updatableItems.add(UpdatableItem(rainbow200[i], i, pvm, this::theCb))
                 updatableItems.add(pvm)
                 i++
             }
             updatingGroup.update(updatableItems)
             peopleSection.add(updatingGroup)
             personGroupAdapter.add(peopleSection)
+        })
+
+        homeActivityViewModel.shuffleProfilesAction.observe(this, Observer { list ->
+            list?.let {
+                updatingGroup.update(it)
+            }
         })
 
         homeActivityViewModel.loadScoreAction.observe(this, Observer {
