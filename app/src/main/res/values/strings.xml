@@ -63,6 +63,7 @@
     <string name="lifetime_incorrect">Lifetime Incorrect</string>
     <string name="percent_correct">% Correct</string>
     <string name="world_stats">Worldwide Stats</string>
+    <string name="sign_out">Sign Out %s</string>
 
     <!--MENU-->
     <string name="add">Add</string>

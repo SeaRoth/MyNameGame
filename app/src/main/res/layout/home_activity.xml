@@ -182,7 +182,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="1"
-                    android:background="@drawable/style_radius_button"
+                    android:background="@drawable/style_radius_button_stats"
                     android:onClick="@{v -> activityViewModel.showScores()}"
                     android:singleLine="true"
                     android:src="@drawable/ic_stats"

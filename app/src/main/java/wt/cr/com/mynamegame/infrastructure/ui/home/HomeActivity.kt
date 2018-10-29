@@ -30,7 +30,6 @@ class HomeActivity : BaseActivity(){
     }
 
     private val personGroupAdapter = GroupAdapter<ViewHolder>()
-
     private lateinit var groupLayoutManager: GridLayoutManager
     private var peopleSection  = Section()
     private var updatingGroup    = Section()

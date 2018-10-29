@@ -89,6 +89,7 @@ dependencies {
 
     implementation "com.github.ybq:AndroidSpinKit:v$android_spin_kit"
 
+    implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
     // firebase-firestore
     implementation 'com.androidhuman.rxfirebase2:firebase-firestore-kotlin:17.1.0.0'
     implementation 'com.androidhuman.rxfirebase2:firebase-firestore:17.1.0.0'

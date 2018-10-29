@@ -5,10 +5,12 @@
     <item
         android:id="@+id/action_add"
         android:title="@string/add"
+        android:icon="@drawable/ic_action_person_add"
         app:showAsAction="always"/>
     
     <item
         android:id="@+id/action_remove"
         android:title="@string/remove"
+        android:icon="@drawable/ic_action_person_add_disabled"
         app:showAsAction="always"/>
 </menu>
