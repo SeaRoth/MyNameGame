@@ -30,7 +30,7 @@ enum class CurrentGameMode {
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
 const val HIGH_SCORE_NORMAL_KEY = "highscorenormal"
 const val HIGH_SCORE_MATT_KEY = "highscorematt"
-const val HIGH_SCORE_HINT_KEY = "highscorehint"
+const val HIGH_SCORE_CUSTOM_KEY = "highscorehint"
 const val LIFETIME_CORRECT_KEY = "lifetime.correct"
 const val LIFETIME_INCORRECT_KEY = "lifetime.incorrect"
 class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {

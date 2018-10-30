@@ -20,7 +20,8 @@ object MyModel {
     )
     data class Player(
             val name: String,
-            val location: String?,
+            val email: String,
+            val location: String,
             val highScore: Int,
             val twoCents: String
     )

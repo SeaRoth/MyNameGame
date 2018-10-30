@@ -6,6 +6,7 @@
     <string name="random">Random</string>
     <string name="normal">Normal</string>
     <string name="hint">Hint</string>
+    <string name="custom">Custom</string>
 
     <!--VIEWMODEL HELP-->
     <string name="correct_field">%s</string>

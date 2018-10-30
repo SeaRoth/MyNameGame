@@ -43,12 +43,8 @@ import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 class StatsActivity : BaseActivity() {
 
     companion object {
-        const val HIGH_SCORE_EXTRA = "high_score_extra"
-
-        fun newIntent(context: Context, highScore: Int): Intent {
-            val i = Intent(context, StatsActivity::class.java)
-            i.putExtra(HIGH_SCORE_EXTRA, highScore)
-            return i
+        fun newIntent(context: Context): Intent {
+            return Intent(context, StatsActivity::class.java)
         }
         const val RC_SIGN_IN = 13
     }
@@ -59,20 +55,17 @@ class StatsActivity : BaseActivity() {
 
     private val mainGroupAdapter = GroupAdapter<ViewHolder>()
     private var statsSection = Section()
-    private var highScore: Int = 0
-    private var docId: String = "-1"
     private lateinit var prefs: SharedPreferences
+    lateinit var user: FirebaseUser
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        highScore = intent.extras?.getInt(HIGH_SCORE_EXTRA)?:0
         prefs = WTServiceLocator.resolve(SharedPreferences::class.java)
-        docId = prefs.getString(DOC_ID_KEY, "-1")?:"-1"
 
         DataBindingUtil.setContentView<StatsActivityBinding>(this, R.layout.stats_activity).apply {
             setSupportActionBar(toolbar)
             setupHomeAsUp(ActionBarStyle.UP_BUTTON)
-            supportActionBar?.title = "Your Rank ..."
+            supportActionBar?.title = "Your Score ..."
             activityViewModel = statsActivityViewModel
         }
 
@@ -89,31 +82,19 @@ class StatsActivity : BaseActivity() {
             mainGroupAdapter.add(statsSection)
             it?.let{ vm -> statsSection.update(vm) }
         })
-        setupAdapter()
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            R.id.action_add -> {
-                if(docId == "-1")
-                    addNewStatDialog(); return true
-            }
-            R.id.action_remove -> {
-                if(docId != "-1")
-                    areYouSureDeleteDialog(); return true
-            }
-            android.R.id.home -> {
-                onBackPressed()
-                finish(); return true
-            }
-            else -> super.onOptionsItemSelected(item)
+        statsActivityViewModel.changeTitleAction.observe(this) {
+            supportActionBar?.title = "Score $it Rank ${statsActivityViewModel.rank}"
+            invalidateOptionsMenu()
         }
+
+        setupAdapter()
     }
 
     private fun areYouSureDeleteDialog(){
         MaterialDialog(this)
         .positiveButton(R.string.yes) { dialog ->
-            Firestore.removePlayer(retFirebaseModeString(), docId, this::addDeleteCallback)
+            Firestore.removePlayer(retFirebaseModeString(), statsActivityViewModel.docId, this::addDeleteCallback)
         }
         .negativeButton(R.string.no) { dialog ->
             // Do something
@@ -140,9 +121,14 @@ class StatsActivity : BaseActivity() {
                 .onShow { materialDialog ->
                     dialog = materialDialog
                     val tvScore = materialDialog.findViewById<TextView>(R.id.tv_score)
-                    tvScore.text = "$highScore"
+                    tvScore.text = "${statsActivityViewModel.highScore}"
                     val btnLocation = materialDialog.findViewById<Button>(R.id.btn_location)
                     val btnSignIn = materialDialog.findViewById<Button>(R.id.btn_sign_in)
+                    auth.currentUser?.let {
+                        user = it
+                        btnSignIn.text = getString(R.string.sign_out, user.displayName)
+                    }
+
                     btnSignIn.setOnClickListener {
                         val providers = arrayListOf(AuthUI.IdpConfig.GoogleBuilder().build())
                         startActivityForResult(
@@ -157,10 +143,22 @@ class StatsActivity : BaseActivity() {
 
                     btnLocation.setOnClickListener {
                         val locationProvider: String = LocationManager.NETWORK_PROVIDER
-                        val permissionLocation = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        if (permissionLocation == PackageManager.PERMISSION_GRANTED){
+                        val permissionCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        val permissionFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+
+                        if (permissionCoarse == PackageManager.PERMISSION_GRANTED
+                                &&
+                                permissionFine == PackageManager.PERMISSION_GRANTED
+                        ){
                             val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-                            locationManager.requestLocationUpdates(locationProvider, 0, 0f, locationListener)
+
+                            try{
+                                locationManager.requestLocationUpdates(locationProvider, 0L, 0f, locationListener)
+                                //val lastKnownLocation: Location = locationManager.getLastKnownLocation(locationProvider)
+                                Timber.d("WHAT ")
+                            }catch(e: Exception){
+                                Timber.d("error")
+                            }
                             Timber.d("WHAT ")
                         } else
                             checkLocationPermissions()
@@ -169,15 +167,22 @@ class StatsActivity : BaseActivity() {
                 .positiveButton { materialDialog ->
                     val btnLocation = materialDialog.findViewById<Button>(R.id.btn_location)
                     val etTwoCents = materialDialog.findViewById<EditText>(R.id.et_two_cents)
-                    user.displayName?.let {
-                        val player = MyModel.Player(
-                                it,
-                                btnLocation.text.toString(),
-                                highScore,
-                                etTwoCents.text.toString()
-                        )
-                        Firestore.addAPlayer(player, retFirebaseModeString(), this::addDeleteCallback)
-                    }
+                    val etLocation = materialDialog.findViewById<EditText>(R.id.et_location)
+
+
+                    if(auth.currentUser != null)
+                        user.displayName?.let {
+                            val player = MyModel.Player(
+                                    it,
+                                    user.email?:"",
+                                    etLocation.text.toString(),
+                                    statsActivityViewModel.highScore,
+                                    etTwoCents.text.toString()
+                            )
+                            Firestore.addNewPlayer(player, retFirebaseModeString(), this::addDeleteCallback)
+                        }
+                    else
+                        saveUpdateView(save_update_view_act_stats, "Please Sign in")
                 }
                 .show()
     }
@@ -190,7 +195,6 @@ class StatsActivity : BaseActivity() {
                     Timber.i("Permission has been denied by user")
                 } else {
                     Timber.i("Permission has been granted by user")
-
                 }
             }
         }
@@ -203,8 +207,13 @@ class StatsActivity : BaseActivity() {
                         this,
                         android.Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
+            ||
+                ContextCompat.checkSelfPermission(
+                        this,
+                        android.Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
         ) {
-            makePermissionRequests(locationCallbackId, Manifest.permission.ACCESS_COARSE_LOCATION)
+            makePermissionRequests(locationCallbackId, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         }else{
             val btnLocation = dialog.findViewById<Button>(R.id.btn_location)
             btnLocation.text = user.displayName
@@ -221,7 +230,6 @@ class StatsActivity : BaseActivity() {
             ActivityCompat.requestPermissions(this, permissionsId, callbackId)
     }
 
-    lateinit var user: FirebaseUser
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -247,14 +255,14 @@ class StatsActivity : BaseActivity() {
     }
 
     private fun addDeleteCallback(){
-        docId = prefs.getString(DOC_ID_KEY, "")?:""
+        statsActivityViewModel.docId = prefs.getString(DOC_ID_KEY, "")?:""
         invalidateOptionsMenu()
     }
     private fun retFirebaseModeString(): String{
         return when {
             statsActivityViewModel.selectedFirebaseMode.get() == CurrentFirebaseMode.NORMAL -> getString(R.string.normal).toLowerCase()
             statsActivityViewModel.selectedFirebaseMode.get() == CurrentFirebaseMode.MATT -> getString(R.string.matt).toLowerCase()
-            else -> getString(R.string.hint).toLowerCase()
+            else -> getString(R.string.custom).toLowerCase()
         }
     }
 
@@ -264,7 +272,7 @@ class StatsActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         inflateOptionsMenu(menu)
-        if(docId == "-1") {
+        if(statsActivityViewModel.rank == "NA") {
             menu.findItem(R.id.action_add).isVisible = true
             menu.findItem(R.id.action_remove).isVisible = false
         }else{
@@ -286,14 +294,14 @@ class StatsActivity : BaseActivity() {
         mainGroupAdapter.add(statsSection)
     }
 
-    // Define a listener that responds to location updates
-    val locationListener = object : LocationListener {
+    private val locationListener: LocationListener = object : LocationListener {
 
         override fun onLocationChanged(location: Location) {
-            Timber.d("onLocationChanged")
+            Timber.d("onLocationChanged ${location.latitude} ${location.longitude}")
         }
 
         override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+            Timber.d("hmm")
         }
 
         override fun onProviderEnabled(provider: String) {
@@ -302,6 +310,26 @@ class StatsActivity : BaseActivity() {
 
         override fun onProviderDisabled(provider: String) {
             Timber.d("disabled")
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when (item?.itemId) {
+            R.id.action_add -> {
+                if(statsActivityViewModel.highScore == 0)
+                    saveUpdateView(save_update_view_act_stats, "BRUH, you have no high score")
+                else if(statsActivityViewModel.docId == "-1")
+                    addNewStatDialog(); return true
+            }
+            R.id.action_remove -> {
+                if(statsActivityViewModel.docId != "-1")
+                    areYouSureDeleteDialog(); return true
+            }
+            android.R.id.home -> {
+                onBackPressed()
+                finish(); return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

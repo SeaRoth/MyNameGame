@@ -106,7 +106,7 @@ class HomeActivity : BaseActivity(){
         }
 
         homeActivityViewModel.loadStatAction.observe(this){
-            startActivity(StatsActivity.newIntent(this, homeActivityViewModel.highScore.value?:0))
+            startActivity(StatsActivity.newIntent(this))
         }
     }
 

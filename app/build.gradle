@@ -89,6 +89,14 @@ dependencies {
 
     implementation "com.github.ybq:AndroidSpinKit:v$android_spin_kit"
 
+    implementation 'com.github.arbitur:Geocoding-Android:1.1.3'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+
+    def room_version = "1.1.1"
+    implementation "android.arch.persistence.room:runtime:$room_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$room_version"
+
     implementation 'com.firebaseui:firebase-ui-auth:4.1.0'
     // firebase-firestore
     implementation 'com.androidhuman.rxfirebase2:firebase-firestore-kotlin:17.1.0.0'

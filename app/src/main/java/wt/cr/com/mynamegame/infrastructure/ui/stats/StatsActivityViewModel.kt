@@ -3,8 +3,11 @@ package wt.cr.com.mynamegame.infrastructure.ui.stats
 import android.app.Application
 import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.MutableLiveData
+import android.content.SharedPreferences
 import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.experimental.android.UI
@@ -12,71 +15,108 @@ import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
 import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DOC_ID_KEY
+import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_CUSTOM_KEY
+import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_MATT_KEY
+import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_NORMAL_KEY
 
 enum class CurrentSortMode {
     NAME, LOCATION, TWOCENTS, SCORE
 }
+
 enum class CurrentFirebaseMode {
-    NORMAL, MATT, HINT
+    NORMAL, MATT, CUSTOM
 }
+
 class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
+
+    private val prefs = WTServiceLocator.resolve(SharedPreferences::class.java)
 
     //Data
     val loadStatAction                                 = MutableLiveData<MutableList<StatViewModel>>()
     private var highScores: MutableList<StatViewModel> = mutableListOf()
-    var players: MutableList<MyModel.Player>           = mutableListOf()
+    private var players: MutableList<MyModel.Player>   = mutableListOf()
+    var highScore: Int = 0
+    var rank: String = "NA"
+    var changeTitleAction = LiveDataActionWithData<Int>()
+
     //Observables
     val showLoadingIndicator = ObservableBoolean(true)
     val selectedFirebaseMode = ObservableField<CurrentFirebaseMode>(CurrentFirebaseMode.NORMAL)
     val selectedSortMode     = ObservableField<CurrentSortMode>(CurrentSortMode.SCORE)
 
+    private lateinit var auth: FirebaseAuth
+
+    var found: DocumentSnapshot? = null
+    var docId: String
     init {
+        auth = FirebaseAuth.getInstance()
+        docId = prefs.getString(DOC_ID_KEY, "-1")?:"-1"
         loadData()
     }
 
     private fun setHighScoresAndLoadStats(){
         highScores.clear()
         var index = 0
+        var mHighScore = 0
+        rank = "NA"
+
         players.forEach { vm ->
-            highScores.add(StatViewModel(index%2==0, vm, this::statClicked))
             index++
+            if(vm.name == found?.getString("name")) {
+                rank = "$index"
+                mHighScore = vm.highScore
+            }
+            highScores.add(StatViewModel(index%2==0, vm, this::statClicked))
         }
         loadStatAction.postValue(highScores)
+        changeTitleAction.actionOccurred(mHighScore)
     }
 
     private fun loadData(){
-        makeRequest(getString(R.string.normal).toLowerCase())
+        onNormalClick()
     }
 
     /**
-     * normal, hint, matt
+     * normal, matt, custom
      */
+
     private fun makeRequest(collectionPath: String){
         launch(UI) {
             WTServiceLocator.resolve(FirebaseFirestore::class.java)
-                    .collection(collectionPath)
-                    .orderBy(getString(R.string.high_score_camel), Query.Direction.ASCENDING)
-                    .limit(10)
-                    .addSnapshotListener { documentSnapshot, error ->
-                        players.clear()
-                        showLoadingIndicator.set(false)
-                        if (error != null) {
-                            Timber.d("")
-                        } else if (documentSnapshot != null) {
-                            highScores.clear()
-                            for ((index, i) in documentSnapshot.documents.withIndex()) {
+                .collection(collectionPath)
+                .orderBy(getString(R.string.high_score_camel), Query.Direction.ASCENDING)
+                .limit(10)
+                .addSnapshotListener { documentSnapshot, error ->
+                    players.clear()
+                    showLoadingIndicator.set(false)
+                    if (error != null) {
+                        Timber.d("")
+                    } else if (documentSnapshot != null) {
+                        highScores.clear()
+                        found = null
+
+                        for ((index, i) in documentSnapshot.documents.withIndex()) {
+                            if(docId == i.id)
+                                found = i
+                            auth.currentUser?.let {
                                 val player = MyModel.Player(
                                         i.get(getString(R.string.name).toLowerCase()).toString(),
-                                        i.get(getString(R.string.location).toLowerCase()).toString(),
+                                        it.email?:"",
+                                                i.get(getString(R.string.location).toLowerCase()).toString(),
                                         Integer.parseInt(i.get(getString(R.string.high_score_camel)).toString()),
                                         i.get(getString(R.string.two_cents_camel)).toString())
                                 players.add(player)
                             }
-                            sortByScore()
+
                         }
+                        sortByScore()
                     }
+                }
         }
     }
 
@@ -85,18 +125,21 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun onNormalClick(){
+        highScore = prefs.getInt(HIGH_SCORE_NORMAL_KEY, 0)
         selectedFirebaseMode.set(CurrentFirebaseMode.NORMAL)
         makeRequest(getString(R.string.normal).toLowerCase())
     }
 
     fun onMattClick(){
+        highScore = prefs.getInt(HIGH_SCORE_MATT_KEY, 0)
         selectedFirebaseMode.set(CurrentFirebaseMode.MATT)
         makeRequest(getString(R.string.matt).toLowerCase())
     }
 
-    fun onHintClick(){
-        selectedFirebaseMode.set(CurrentFirebaseMode.HINT)
-        makeRequest(getString(R.string.hint).toLowerCase())
+    fun onCustomClick(){
+        highScore = prefs.getInt(HIGH_SCORE_CUSTOM_KEY, 0)
+        selectedFirebaseMode.set(CurrentFirebaseMode.CUSTOM)
+        makeRequest(getString(R.string.custom).toLowerCase())
     }
 
     /**
@@ -137,7 +180,4 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
         players.addAll(temp.sortedByDescending{ it.highScore })
         setHighScoresAndLoadStats()
     }
-
-
-
 }
