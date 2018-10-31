@@ -19,6 +19,7 @@ import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
+import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DEFAULT_DOC_ID
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DOC_ID_KEY
 import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_CUSTOM_KEY
 import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_MATT_KEY
@@ -43,6 +44,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     var highScore: Int = 0
     var rank: String = "NA"
     var changeTitleAction = LiveDataActionWithData<Int>()
+    var errorAction       = LiveDataActionWithData<String>()
 
     //Observables
     val showLoadingIndicator = ObservableBoolean(true)
@@ -55,19 +57,19 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     var docId: String
     init {
         auth = FirebaseAuth.getInstance()
-        docId = prefs.getString(DOC_ID_KEY, "-1")?:"-1"
+        docId = prefs.getString(DOC_ID_KEY, DEFAULT_DOC_ID)?:DEFAULT_DOC_ID
         loadData()
     }
 
     private fun setHighScoresAndLoadStats(){
         highScores.clear()
         var index = 0
-        var mHighScore = 0
-        rank = "NA"
+        var mHighScore = highScore
+        rank = getString(R.string.NA)
 
         players.forEach { vm ->
             index++
-            if(vm.name == found?.getString("name")) {
+            if(vm.email == found?.getString(getString(R.string.email))) {
                 rank = "$index"
                 mHighScore = vm.highScore
             }

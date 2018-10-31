@@ -13,8 +13,8 @@ android {
         applicationId "wt.cr.com.mynamegame"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -42,6 +42,9 @@ repositories {
     jcenter()
     maven { url "http://dl.bintray.com/jetbrains/spek" }
     maven { url 'https://maven.fabric.io/public' }
+    maven() {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
 }
 
 dependencies {
@@ -59,6 +62,10 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$android_support_libs_version"
     implementation "com.android.support:design:$android_support_libs_version"
     implementation "com.android.support:cardview-v7:$android_support_libs_version"
+
+    implementation ('com.github.worker8:tourguide:2.0.0-SNAPSHOT@aar') {
+        transitive=true
+    }
 
     // Android architecture components
     implementation "android.arch.lifecycle:runtime:$arch_version"

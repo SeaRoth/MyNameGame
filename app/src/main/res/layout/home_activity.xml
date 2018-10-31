@@ -10,6 +10,7 @@
             type="wt.cr.com.mynamegame.infrastructure.ui.home.HomeActivityViewModel" />
     </data>
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/cl_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/app_background">

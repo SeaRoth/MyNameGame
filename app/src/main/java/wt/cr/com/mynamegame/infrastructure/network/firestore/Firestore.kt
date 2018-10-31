@@ -11,6 +11,7 @@ import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion
 class Firestore {
 
     companion object {
+        const val DEFAULT_DOC_ID = "-1"
         const val DOC_ID_KEY = "doc_id_key"
 
         private fun createUser(player: MyModel.Player) : HashMap<String, Any> {
@@ -38,8 +39,6 @@ class Firestore {
                     .addOnFailureListener {
                         callback()
                     }
-
-
         }
 
         fun addNewPlayer(player: MyModel.Player, collection: String, callback: () -> Unit?){

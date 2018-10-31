@@ -28,6 +28,10 @@ enum class CurrentGameMode {
     NORMAL, MATT, HINT, CUSTOM, ERROR
 }
 const val PREFS_SCORE = "wt.cr.com.mynamegame.scoreprefs"
+const val FIRST_TIME_OPEN_KEY = "firstTimeOpenApp"
+const val FIRST_TIME_MATT_KEY = "firstTimeMatt"
+const val FIRST_TIME_STATS_KEY = "firstTimeStats"
+
 const val HIGH_SCORE_NORMAL_KEY = "highscorenormal"
 const val HIGH_SCORE_MATT_KEY = "highscorematt"
 const val HIGH_SCORE_CUSTOM_KEY = "highscorehint"
@@ -138,7 +142,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
             hasUserGuessed.postValue(false)
         }else{
             if(selectedGameMode.get() == CurrentGameMode.CUSTOM){
-                normalErrorAction.actionOccurred("NOT SETUP!")
+                normalErrorAction.actionOccurred(getString(R.string.error_not_setup))
             }else {
                 //TURN ON
                 isGameStarted.set(true)
@@ -345,7 +349,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun imageErrorLoading(id: String){
         val v = updatableItemList.firstOrNull { it.pvm?.id?.get() == (id) }
-        normalErrorAction.actionOccurred("ERROR LOADING ${v?.pvm?.first?.get()} or ${v?.pvm?.first?.get()}")
+        normalErrorAction.actionOccurred(getString(R.string.error_loading_two, v?.pvm?.first?.get(), v?.pvm?.id?.get()))
         val indexForBottomButton = updatableItemList.indexOf(v)
         showHideBottomButtons(indexForBottomButton)
         v.let {

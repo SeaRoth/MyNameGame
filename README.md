@@ -1,10 +1,12 @@
 # MyNameGame
 
-This is my version of the name game. The original template was written in Java and was over two years old.
+This is my version of the name game.
 
-![](screencast.gif)
+[Build it on your machine](ANDROID_STUDIO_SETUP.md)
 
 https://play.google.com/store/apps/details?id=wt.cr.com.mynamegame
+
+![](screencast.gif)
 
 ## Outside Perspective:
 1. Turn on the game and press start (Green arrow)
@@ -23,12 +25,6 @@ https://play.google.com/store/apps/details?id=wt.cr.com.mynamegame
 2. Kotlin 1.2.71
 3. Gradle Dist 4.10.2-all
 4. Three activities (Splash, Home, Stats)
-
-## Build it on your machine:
-1. Add wt.cr.com.mynamegame to a [firebase project](https://console.firebase.google.com/u/0/)
-2. Download the google-services.json and put it MyNameGame/app
-3. Enable Google Sign In inside the Firebase project settings
-4. Enable Cloud Firestore inside the Firebase project settings
 
 ### View1
 ![Question](https://github.com/SeaRoth/MyNameGame/blob/master/1.png?raw=true)

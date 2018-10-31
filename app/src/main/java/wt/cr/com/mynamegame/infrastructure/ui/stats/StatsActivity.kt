@@ -33,6 +33,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.stats_activity.*
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
+import wt.cr.com.mynamegame.R.id.save_update_view_act_stats
+import wt.cr.com.mynamegame.R.id.toolbar
 import wt.cr.com.mynamegame.databinding.StatsActivityBinding
 import wt.cr.com.mynamegame.domain.model.MyModel
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
@@ -65,7 +67,7 @@ class StatsActivity : BaseActivity() {
         DataBindingUtil.setContentView<StatsActivityBinding>(this, R.layout.stats_activity).apply {
             setSupportActionBar(toolbar)
             setupHomeAsUp(ActionBarStyle.UP_BUTTON)
-            supportActionBar?.title = "Your Score ..."
+            supportActionBar?.title = getString(R.string.your_score)
             activityViewModel = statsActivityViewModel
         }
 
@@ -84,7 +86,7 @@ class StatsActivity : BaseActivity() {
         })
 
         statsActivityViewModel.changeTitleAction.observe(this) {
-            supportActionBar?.title = "Score $it Rank ${statsActivityViewModel.rank}"
+            supportActionBar?.title = getString(R.string.score_rank, it, statsActivityViewModel.rank)
             invalidateOptionsMenu()
         }
 
@@ -142,26 +144,28 @@ class StatsActivity : BaseActivity() {
                     }
 
                     btnLocation.setOnClickListener {
-                        val locationProvider: String = LocationManager.NETWORK_PROVIDER
-                        val permissionCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        val permissionFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-
-                        if (permissionCoarse == PackageManager.PERMISSION_GRANTED
-                                &&
-                                permissionFine == PackageManager.PERMISSION_GRANTED
-                        ){
-                            val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-                            try{
-                                locationManager.requestLocationUpdates(locationProvider, 0L, 0f, locationListener)
-                                //val lastKnownLocation: Location = locationManager.getLastKnownLocation(locationProvider)
-                                Timber.d("WHAT ")
-                            }catch(e: Exception){
-                                Timber.d("error")
-                            }
-                            Timber.d("WHAT ")
-                        } else
-                            checkLocationPermissions()
+                        saveUpdateView(save_update_view_act_stats, getString(R.string.error_disabled))
+//
+//                        val locationProvider: String = LocationManager.NETWORK_PROVIDER
+//                        val permissionCoarse = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+//                        val permissionFine = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//
+//                        if (permissionCoarse == PackageManager.PERMISSION_GRANTED
+//                                &&
+//                                permissionFine == PackageManager.PERMISSION_GRANTED
+//                        ){
+//                            val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//
+//                            try{
+//                                locationManager.requestLocationUpdates(locationProvider, 0L, 0f, locationListener)
+//                                //val lastKnownLocation: Location = locationManager.getLastKnownLocation(locationProvider)
+//                                Timber.d("WHAT ")
+//                            }catch(e: Exception){
+//                                Timber.d("error")
+//                            }
+//                            Timber.d("WHAT ")
+//                        } else
+//                            checkLocationPermissions()
                     }
                 }
                 .positiveButton { materialDialog ->
@@ -182,7 +186,7 @@ class StatsActivity : BaseActivity() {
                             Firestore.addNewPlayer(player, retFirebaseModeString(), this::addDeleteCallback)
                         }
                     else
-                        saveUpdateView(save_update_view_act_stats, "Please Sign in")
+                        saveUpdateView(save_update_view_act_stats, getString(R.string.error_please_sign_in))
                 }
                 .show()
     }
@@ -198,7 +202,6 @@ class StatsActivity : BaseActivity() {
                 }
             }
         }
-        Timber.d("we found something")
     }
 
     private val locationCallbackId = 31
@@ -235,14 +238,11 @@ class StatsActivity : BaseActivity() {
 
         if (requestCode == Companion.RC_SIGN_IN) {
             val response = IdpResponse.fromResultIntent(data)
-
             if (resultCode == Activity.RESULT_OK) {
-                // Successfully signed in
                 FirebaseAuth.getInstance().currentUser?.let {
                     user = it
                     setDialogUsername()
                 }
-                // ...
             } else {
                 showApiError("ERROR")
             }
@@ -272,7 +272,7 @@ class StatsActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         inflateOptionsMenu(menu)
-        if(statsActivityViewModel.rank == "NA") {
+        if(statsActivityViewModel.rank == getString(R.string.NA)) {
             menu.findItem(R.id.action_add).isVisible = true
             menu.findItem(R.id.action_remove).isVisible = false
         }else{
@@ -318,7 +318,7 @@ class StatsActivity : BaseActivity() {
             R.id.action_add -> {
                 if(statsActivityViewModel.highScore == 0)
                     saveUpdateView(save_update_view_act_stats, "BRUH, you have no high score")
-                else if(statsActivityViewModel.docId == "-1")
+                else if(statsActivityViewModel.rank == "NA")
                     addNewStatDialog(); return true
             }
             R.id.action_remove -> {

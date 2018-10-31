@@ -4,17 +4,27 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.databinding.DataBindingUtil
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.GridLayoutManager
+import android.view.Gravity
+import android.view.View
+import android.view.animation.BounceInterpolator
+import android.view.animation.TranslateAnimation
 import com.xwray.groupie.GroupAdapter
 import wt.cr.com.mynamegame.infrastructure.ui.BaseActivity.BaseActivity
 import com.xwray.groupie.Section
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.home_activity.*
+import tourguide.tourguide.Overlay
+import tourguide.tourguide.TourGuide
 import wt.cr.com.mynamegame.R
+import wt.cr.com.mynamegame.R.id.rv_multi_item
 import wt.cr.com.mynamegame.databinding.HomeActivityBinding
+import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.ui.common.NoConnectionViewModel
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import wt.cr.com.mynamegame.infrastructure.ui.stats.StatsActivity
@@ -36,6 +46,8 @@ class HomeActivity : BaseActivity(){
     private var updatableItems = ArrayList<UpdatableItem>()
     private var scoreSection = Section()
     private var errorSection = Section()
+    private val prefs = WTServiceLocator.resolve(SharedPreferences::class.java)
+    lateinit var tourGuide: TourGuide
 
     private val homeActivityViewModel : HomeActivityViewModel by lazy {
         ViewModelProviders.of(this).get(HomeActivityViewModel::class.java)
@@ -55,7 +67,7 @@ class HomeActivity : BaseActivity(){
         personGroupAdapter.apply {
             widthPixels = resources.displayMetrics.widthPixels
             heightPixels = resources.displayMetrics.heightPixels
-            spanCount = if(heightPixels > widthPixels)
+            spanCount = if (heightPixels > widthPixels)
                 6
             else
                 12
@@ -66,7 +78,7 @@ class HomeActivity : BaseActivity(){
         }
         setupAdapter()
 
-        homeActivityViewModel.normalErrorAction.observe(this){it ->
+        homeActivityViewModel.normalErrorAction.observe(this) { it ->
             saveUpdateView(save_update_view_act_list_detail, it)
         }
 
@@ -76,7 +88,7 @@ class HomeActivity : BaseActivity(){
             updatingGroup = Section()
             updatableItems.clear()
             var i = 1
-            it?.forEach {pvm ->
+            it?.forEach { pvm ->
                 updatableItems.add(pvm)
                 i++
             }
@@ -98,15 +110,48 @@ class HomeActivity : BaseActivity(){
             it?.let { scoreViewModel -> scoreSection.add(scoreViewModel) }
         })
 
-        homeActivityViewModel.apiErrorAction.observe(this){ it ->
+        homeActivityViewModel.apiErrorAction.observe(this) { it ->
             personGroupAdapter.clear()
             personGroupAdapter.add(errorSection)
             showApiError(it)
             errorSection.add(NoConnectionViewModel(it, this::callbackRetry))
         }
 
-        homeActivityViewModel.loadStatAction.observe(this){
+        homeActivityViewModel.loadStatAction.observe(this) {
             startActivity(StatsActivity.newIntent(this))
+        }
+
+        //TODO: CHECK IF FIRST TIME
+        if(prefs.getBoolean(FIRST_TIME_OPEN_KEY, true)){
+            TourGuide.create(this) {
+                toolTip {
+                    title { "Welcome to The Name Game" }
+                    description { "To get started press the play button!" }
+                    textColor { getColor(R.color.red) }
+                    backgroundColor { getColor(R.color.orange) }
+                    shadow { true }
+                    gravity { Gravity.TOP or Gravity.LEFT }
+                    overlay {
+                        disableClick { false }
+                        disableClickThroughHole { false }
+                        style { Overlay.Style.RECTANGLE }
+                        backgroundColor { Color.parseColor("#AAFF0000") }
+                        onClickListener {
+                            View.OnClickListener {
+                                prefs.edit().putBoolean(FIRST_TIME_OPEN_KEY, true).apply()
+                                tourGuide.cleanUp()
+                            }
+                        }
+                    }
+                    enterAnimation {
+                        TranslateAnimation(0f, 0f, 200f, 0f).apply {
+                            duration = 1000
+                            fillAfter = true
+                            interpolator = BounceInterpolator()
+                        }
+                    }
+                }
+            }.playOn(fab)
         }
     }
 
