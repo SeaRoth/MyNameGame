@@ -18,6 +18,7 @@ buildscript {
         moshi_version = "1.7.0"
         retrofit_moshi_version = "2.3.0"
         moshi_codegen_version = "1.7.0"
+        arrow_version = "0.7.3"
         hockey_version = "5.0.2"
         picasso_version = "2.71828"
         picasso_downloader_version = "1.1.0"

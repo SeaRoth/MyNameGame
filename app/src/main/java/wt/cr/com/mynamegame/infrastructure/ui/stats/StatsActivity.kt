@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.location.Location
 import android.location.LocationListener
-import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -33,10 +32,8 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.stats_activity.*
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
-import wt.cr.com.mynamegame.R.id.save_update_view_act_stats
-import wt.cr.com.mynamegame.R.id.toolbar
 import wt.cr.com.mynamegame.databinding.StatsActivityBinding
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Player
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DOC_ID_KEY
@@ -176,7 +173,7 @@ class StatsActivity : BaseActivity() {
 
                     if(auth.currentUser != null)
                         user.displayName?.let {
-                            val player = MyModel.Player(
+                            val player = Player(
                                     it,
                                     user.email?:"",
                                     etLocation.text.toString(),

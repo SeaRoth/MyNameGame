@@ -14,11 +14,10 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import wt.cr.com.mynamegame.R
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Player
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
-import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DEFAULT_DOC_ID
 import wt.cr.com.mynamegame.infrastructure.network.firestore.Firestore.Companion.DOC_ID_KEY
 import wt.cr.com.mynamegame.infrastructure.ui.home.HIGH_SCORE_CUSTOM_KEY
@@ -40,7 +39,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
     //Data
     val loadStatAction                                 = MutableLiveData<MutableList<StatViewModel>>()
     private var highScores: MutableList<StatViewModel> = mutableListOf()
-    private var players: MutableList<MyModel.Player>   = mutableListOf()
+    private var players: MutableList<Player>   = mutableListOf()
     var highScore: Int = 0
     var rank: String = "NA"
     var changeTitleAction = LiveDataActionWithData<Int>()
@@ -106,7 +105,7 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
                             if(docId == i.id)
                                 found = i
                             auth.currentUser?.let {
-                                val player = MyModel.Player(
+                                val player = Player(
                                         i.get(getString(R.string.name).toLowerCase()).toString(),
                                         it.email?:"",
                                                 i.get(getString(R.string.location).toLowerCase()).toString(),
@@ -149,34 +148,34 @@ class StatsActivityViewModel(app: Application) : AndroidViewModel(app) {
      */
     fun sortByName(){
         selectedSortMode.set(CurrentSortMode.NAME)
-        val temp: MutableList<MyModel.Player> = mutableListOf()
+        val temp: MutableList<Player> = mutableListOf()
         temp.addAll(players)
         players.clear()
-        players.addAll(temp.sortedWith(compareBy<MyModel.Player>{ it.name }))
+        players.addAll(temp.sortedWith(compareBy<Player>{ it.name }))
         setHighScoresAndLoadStats()
     }
 
     fun sortByLocation(){
         selectedSortMode.set(CurrentSortMode.LOCATION)
-        val temp: MutableList<MyModel.Player> = mutableListOf()
+        val temp: MutableList<Player> = mutableListOf()
         temp.addAll(players)
         players.clear()
-        players.addAll(temp.sortedWith(compareBy<MyModel.Player>{ it.location }))
+        players.addAll(temp.sortedWith(compareBy<Player>{ it.location }))
         setHighScoresAndLoadStats()
     }
 
     fun sortByCents(){
         selectedSortMode.set(CurrentSortMode.TWOCENTS)
-        val temp: MutableList<MyModel.Player> = mutableListOf()
+        val temp: MutableList<Player> = mutableListOf()
         temp.addAll(players)
         players.clear()
-        players.addAll(temp.sortedWith(compareBy<MyModel.Player>{ it.twoCents }))
+        players.addAll(temp.sortedWith(compareBy<Player>{ it.twoCents }))
         setHighScoresAndLoadStats()
     }
 
     fun sortByScore(){
         selectedSortMode.set(CurrentSortMode.SCORE)
-        val temp: MutableList<MyModel.Player> = mutableListOf()
+        val temp: MutableList<Player> = mutableListOf()
         temp.addAll(players)
         players.clear()
         players.addAll(temp.sortedByDescending{ it.highScore })

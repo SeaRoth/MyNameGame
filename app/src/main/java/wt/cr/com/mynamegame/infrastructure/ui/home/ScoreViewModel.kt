@@ -3,11 +3,11 @@ package wt.cr.com.mynamegame.infrastructure.ui.home
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
 import com.xwray.groupie.databinding.BindableItem
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Score
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 import kotlin.math.roundToInt
 
-class ScoreViewModel(private val score: MyModel.Score,
+class ScoreViewModel(private val score: Score,
                      val callbackShare: () -> Unit,
                      val callbackReset: (ScoreViewModel) -> Unit,
                      val callbackResetTop: (ScoreViewModel) -> Unit)

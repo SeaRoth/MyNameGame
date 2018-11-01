@@ -21,11 +21,11 @@
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@{viewModel.lifetimePercentage}"
-            app:layout_constraintEnd_toEndOf="@+id/textView19"
-            app:layout_constraintStart_toStartOf="@+id/textView19"
-            app:layout_constraintTop_toBottomOf="@+id/textView19"
+            app:layout_constraintBottom_toBottomOf="@+id/textView19"
+            app:layout_constraintEnd_toEndOf="@+id/textView18"
+            app:layout_constraintStart_toStartOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="@+id/textView19"
             tools:text="23%" />
 
         <TextView
@@ -33,34 +33,35 @@
             style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="12dp"
             android:text="@string/percent_correct"
             app:layout_constraintEnd_toEndOf="@+id/textView17"
-            app:layout_constraintStart_toStartOf="@+id/textView17"
-            app:layout_constraintTop_toBottomOf="@+id/textView18" />
+            app:layout_constraintTop_toBottomOf="@+id/textView17" />
 
         <TextView
             android:id="@+id/textView18"
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:text="@{viewModel.lifetimeIncorrect}"
-            app:layout_constraintEnd_toEndOf="@+id/textView17"
-            app:layout_constraintStart_toStartOf="@+id/textView17"
-            app:layout_constraintTop_toBottomOf="@+id/textView17"
-            tools:text="100" />
+            app:layout_constraintBottom_toBottomOf="@+id/textView17"
+            app:layout_constraintStart_toEndOf="@+id/textView17"
+            app:layout_constraintTop_toTopOf="@+id/textView17"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="77" />
 
         <TextView
             android:id="@+id/textView16"
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@{viewModel.lifetimeCorrect}"
-            app:layout_constraintEnd_toEndOf="@+id/textView15"
-            app:layout_constraintStart_toStartOf="@+id/textView15"
-            app:layout_constraintTop_toBottomOf="@+id/textView15"
+            app:layout_constraintBottom_toBottomOf="@+id/textView15"
+            app:layout_constraintEnd_toEndOf="@+id/textView18"
+            app:layout_constraintStart_toStartOf="@+id/textView18"
+            app:layout_constraintTop_toTopOf="@+id/textView15"
             tools:text="23" />
 
         <TextView
@@ -68,23 +69,22 @@
             style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
             android:text="@string/lifetime_correct"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/textView17"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
             android:id="@+id/textView17"
             style="@style/ScoreTitleStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/lifetime_incorrect"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView16" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView15" />
 
         <TextView
             android:id="@+id/textView9"
@@ -92,10 +92,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:text="@string/current_streak"
-            app:layout_constraintEnd_toEndOf="@+id/textView8"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -104,24 +104,24 @@
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:text="@{viewModel.current}"
-            app:layout_constraintEnd_toEndOf="@+id/textView9"
-            app:layout_constraintStart_toStartOf="@+id/textView9"
-            app:layout_constraintTop_toBottomOf="@+id/textView9"
+            app:layout_constraintBottom_toBottomOf="@+id/textView9"
+            app:layout_constraintStart_toEndOf="@+id/textView9"
+            app:layout_constraintTop_toTopOf="@+id/textView9"
             tools:text="1" />
 
         <TextView
             android:id="@+id/textView7"
             style="@style/ScoreTitleStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:text="@string/high_score"
-            app:layout_constraintEnd_toEndOf="@+id/textView8"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView16"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
@@ -129,79 +129,73 @@
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="@{viewModel.high}"
-            app:layout_constraintEnd_toEndOf="@+id/textView7"
-            app:layout_constraintStart_toStartOf="@+id/textView7"
-            app:layout_constraintTop_toBottomOf="@+id/textView7"
+            app:layout_constraintEnd_toEndOf="@+id/textView13"
+            app:layout_constraintStart_toStartOf="@+id/textView13"
+            app:layout_constraintTop_toBottomOf="@+id/textView13"
             tools:text="6" />
 
         <TextView
-            android:id="@+id/textView8"
-            style="@style/ScoreTitleStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/most_known_person"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView10" />
-
-        <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/textView37"
             style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@{viewModel.mostKnown}"
+            android:text="@{viewModel.high}"
             app:layout_constraintEnd_toEndOf="@+id/textView8"
             app:layout_constraintStart_toStartOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView8"
-            tools:text="Charles" />
+            tools:text="6" />
 
-        <Button
-            android:id="@+id/button2"
+        <TextView
+            android:id="@+id/textView38"
+            style="@style/ScoreItemStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:onClick="@{v -> viewModel.scoreReset()}"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/reset_score"
-            style="@style/ButtonScoreStyle"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button3" />
+            android:text="@{viewModel.high}"
+            app:layout_constraintEnd_toEndOf="@+id/textView11"
+            app:layout_constraintStart_toStartOf="@+id/textView11"
+            app:layout_constraintTop_toBottomOf="@+id/textView11"
+            tools:text="8" />
 
-        <Button
-            android:id="@+id/button3"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/matt"
+            app:layout_constraintEnd_toEndOf="@+id/textView7"
+            app:layout_constraintStart_toStartOf="@+id/textView7"
+            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:onClick="@{v -> viewModel.scoreShare()}"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/view_high_scores"
-            style="@style/ButtonScoreStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+            android:text="@string/custom"
+            app:layout_constraintStart_toEndOf="@+id/textView8"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
 
-        <Button
-            android:id="@+id/button4"
+        <TextView
+            android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:onClick="@{v -> viewModel.scoreResetTop()}"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="@string/reset_top_score"
-            style="@style/ButtonScoreStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button3" />
+            android:layout_marginEnd="8dp"
+            android:text="@string/normal"
+            app:layout_constraintEnd_toStartOf="@+id/textView8"
+            app:layout_constraintTop_toTopOf="@+id/textView8" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/textView18"
+            app:layout_constraintEnd_toEndOf="@+id/textView18"
+            app:layout_constraintStart_toStartOf="@+id/textView18"
+            app:layout_constraintTop_toBottomOf="@+id/textView16"
+            app:layout_constraintVertical_bias="0.0" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

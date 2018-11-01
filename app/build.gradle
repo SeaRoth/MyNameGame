@@ -120,6 +120,8 @@ dependencies {
 
     implementation 'com.afollestad.material-dialogs:core:2.0.0-alpha12'
 
+    implementation "io.arrow-kt:arrow-core:$arrow_version"
+
     // Groupie
     implementation "com.xwray:groupie:$groupie_version"
     implementation "com.xwray:groupie-databinding:$groupie_version"

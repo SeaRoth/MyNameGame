@@ -13,13 +13,14 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import wt.cr.com.mynamegame.R
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Profile
+import wt.cr.com.mynamegame.domain.model.Score
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataAction
 import wt.cr.com.mynamegame.infrastructure.common.utils.LiveDataActionWithData
 import wt.cr.com.mynamegame.infrastructure.common.utils.getString
 import wt.cr.com.mynamegame.infrastructure.di.WTServiceLocator
-import wt.cr.com.mynamegame.infrastructure.network.client.ApiClient
-import wt.cr.com.mynamegame.infrastructure.repository.HumanRepo
+import wt.cr.com.mynamegame.infrastructure.network.ApiClient
+import wt.cr.com.mynamegame.infrastructure.repository.HumanRepository
 import wt.cr.com.mynamegame.infrastructure.ui.home.cards.UpdatableItem
 import java.util.*
 import java.util.concurrent.ThreadLocalRandom
@@ -60,7 +61,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val hasUserGuessed         = MutableLiveData<Boolean>()
     var updatableItemList:   MutableList<UpdatableItem> = mutableListOf()
 
-    private var profiles: MutableList<MyModel.Person> = mutableListOf()
+    private var profiles: MutableList<Profile> = mutableListOf()
     //Observables
     val selectedGameMode     = ObservableField<CurrentGameMode>(CurrentGameMode.NORMAL)
     val shuffleProfiles      = ObservableBoolean(true)
@@ -77,7 +78,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
     val highScoreField       = ObservableField<String>(getString(R.string.high_score_field_ext, getString(R.string.zero)))
     val secondsLeftField     = ObservableField<String>()
     //Repo
-    val humanRepo get() = WTServiceLocator.resolve(HumanRepo::class.java)
+    val humanRepo get() = WTServiceLocator.resolve(HumanRepository::class.java)
 
     init {
         rainbow200 = app.resources.getIntArray(R.array.rainbow_200)
@@ -107,6 +108,13 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
                                 errorMode(error.localizedMessage)
                             }
                     )
+        }
+    }
+
+    fun loadNewData(){
+        launch(UI) {
+            showLoadingIndicator.set(true)
+
         }
     }
 
@@ -206,7 +214,7 @@ class HomeActivityViewModel(app: Application) : AndroidViewModel(app) {
         val vm = profiles.firstOrNull { it.id.equals(sorted[0].first) }
         launch(UI) {
             val score =
-                    MyModel.Score(
+                    Score(
                     numberCorrect.value?:0,
                     highScore.value?:0,
                     vm?.firstName,

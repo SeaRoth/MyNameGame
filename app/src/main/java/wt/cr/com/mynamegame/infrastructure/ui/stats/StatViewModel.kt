@@ -4,11 +4,11 @@ import android.databinding.ObservableBoolean
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
 import com.xwray.groupie.databinding.BindableItem
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Player
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
 class StatViewModel(isE: Boolean,
-                    player: MyModel.Player,
+                    player: Player,
                     val personClickListener:
                     (StatViewModel) -> Unit): BaseBindableViewModel(){
 

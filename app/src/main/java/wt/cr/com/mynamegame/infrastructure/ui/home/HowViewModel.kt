@@ -2,13 +2,12 @@ package wt.cr.com.mynamegame.infrastructure.ui.home
 
 import android.databinding.ObservableField
 import android.databinding.ViewDataBinding
-import android.util.Log
 import com.xwray.groupie.databinding.BindableItem
 import timber.log.Timber
-import wt.cr.com.mynamegame.domain.model.MyModel
+import wt.cr.com.mynamegame.domain.model.Score
 import wt.cr.com.mynamegame.infrastructure.ui.BaseBindableViewModel
 
-class HowViewModel(private val score: MyModel.Score,
+class HowViewModel(private val score: Score,
                    val callbackViewLocal: (HowViewModel) -> Unit,
                    val callbackUpload: (HowViewModel) -> Unit,
                    val callbackViewWorld: (HowViewModel) -> Unit)

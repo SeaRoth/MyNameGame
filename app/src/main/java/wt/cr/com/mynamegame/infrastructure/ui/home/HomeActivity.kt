@@ -130,7 +130,7 @@ class HomeActivity : BaseActivity(){
                     textColor { getColor(R.color.red) }
                     backgroundColor { getColor(R.color.orange) }
                     shadow { true }
-                    gravity { Gravity.TOP or Gravity.LEFT }
+                    gravity { Gravity.TOP or Gravity.START }
                     overlay {
                         disableClick { false }
                         disableClickThroughHole { false }
